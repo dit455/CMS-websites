@@ -27,8 +27,43 @@ import siteLogo from '../assets/img/Site_logo.png';
 import { CMS_ENABLED } from '../config/portalConfig';
 import { useSiteContent } from '../content/useSiteContent';
 
+/** Maps icon name strings stored in the CMS to the React icon components the nav uses. */
+const CMS_ICON_MAP = {
+  FaHome:         <FaHome size={14} />,
+  FaInfoCircle:   <FaInfoCircle size={14} />,
+  FaCogs:         <FaCogs size={14} />,
+  FaFileAlt:      <FaFileAlt size={14} />,
+  FaBell:         <FaBell size={14} />,
+  FaDownload:     <FaDownload size={14} />,
+  FaBriefcase:    <FaBriefcase size={14} />,
+  FaComments:     <FaComments size={14} />,
+  FaGavel:        <FaGavel size={14} />,
+  FaEnvelope:     <FaEnvelope size={14} />,
+  FaEllipsisH:    <FaEllipsisH size={14} />,
+  FaChevronRight: <FaChevronRight size={12} />,
+};
+
+/** Map CMS menu items (from API) to the navLinks shape the Header expects. */
+const cmsMenuToNavLinks = (cmsItems = []) =>
+  cmsItems.map((item) => ({
+    href:  item.href || '#',
+    label: item.label,
+    icon:  CMS_ICON_MAP[item.icon] ?? null,
+    badge: item.badge || undefined,
+    // Only set children when there are actual child items — an empty array is truthy
+    // and would incorrectly render every item as a dropdown.
+    children: item.children && item.children.length > 0
+      ? item.children.map((child) => ({
+          href:  child.href || '#',
+          label: child.label,
+          icon:  CMS_ICON_MAP[child.icon] ?? null,
+          badge: child.badge || undefined,
+        }))
+      : undefined,
+  }));
+
 const Header = () => {
-  const { content } = useSiteContent();
+  const { content, menu } = useSiteContent();
   const { site } = content;
   const [expanded, setExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,28 +85,31 @@ const Header = () => {
     [content.services],
   );
 
+  const defaultNavLinks = [
+    { href: '#', label: 'Home', icon: <FaHome size={14} /> },
+    { href: '#about-detail', label: 'About Us', icon: <FaInfoCircle size={14} /> },
+    { href: '#services', label: 'Services', icon: <FaCogs size={14} /> },
+    { href: '#documents', label: 'Documents', icon: <FaFileAlt size={14} /> },
+    { href: '#notifications', label: 'Notifications', icon: <FaBell size={14} />, badge: 'Live' },
+    { href: '#downloads', label: 'Downloads', icon: <FaDownload size={14} /> },
+    { href: '#tenders', label: 'Tenders', icon: <FaFileAlt size={14} /> },
+    {
+      href: '#more',
+      label: 'More',
+      icon: <FaEllipsisH size={14} />,
+      children: [
+        { href: '#eodb', label: 'EoDB', icon: <FaBriefcase size={14} /> },
+        { href: '#grievances', label: 'Grievances', icon: <FaComments size={14} /> },
+        { href: '#rti', label: 'RTI', icon: <FaGavel size={14} />, badge: 'Info' },
+        { href: '#contact', label: 'Contact', icon: <FaEnvelope size={14} /> },
+      ],
+    },
+  ];
+
+  // CMS is source of truth: use its items if any exist, otherwise fall back to hardcoded defaults.
   const navLinks = useMemo(
-    () => [
-      { href: '#', label: 'Home', icon: <FaHome size={14} /> },
-      { href: '#about-detail', label: 'About Us', icon: <FaInfoCircle size={14} /> },
-      { href: '#services', label: 'Services', icon: <FaCogs size={14} /> },
-      { href: '#documents', label: 'Documents', icon: <FaFileAlt size={14} /> },
-      { href: '#notifications', label: 'Notifications', icon: <FaBell size={14} />, badge: 'Live' },
-      { href: '#tenders', label: 'Tenders', icon: <FaFileAlt size={14} /> },
-      { href: '#rti', label: 'RTI', icon: <FaGavel size={14} />, badge: 'Info' },
-      {
-        href: '#more',
-        label: 'More',
-        icon: <FaEllipsisH size={14} />,
-        children: [
-          { href: '#eodb', label: 'EoDB', icon: <FaBriefcase size={14} /> },
-          { href: '#grievances', label: 'Grievances', icon: <FaComments size={14} /> },
-          { href: '#downloads', label: 'Downloads', icon: <FaDownload size={14} />, badge: 'PDF' },
-          { href: '#contact', label: 'Contact', icon: <FaEnvelope size={14} /> },
-        ],
-      },
-    ],
-    [],
+    () => (menu && menu.length > 0 ? cmsMenuToNavLinks(menu) : defaultNavLinks),
+    [menu],
   );
 
   const searchableNavLinks = useMemo(

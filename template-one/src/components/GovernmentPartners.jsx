@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { GOVERNMENT_PARTNER_PORTALS } from '../config/portalConfig';
+import { useSiteContent } from '../content/useSiteContent';
 
 const PartnerCard = ({ partner, duplicate = false }) => {
   const [imageFailed, setImageFailed] = useState(false);
@@ -40,7 +41,12 @@ const PartnerCard = ({ partner, duplicate = false }) => {
   );
 };
 
-const GovernmentPartners = () => (
+const GovernmentPartners = () => {
+  const { content } = useSiteContent();
+  // Always show hardcoded template partners PLUS any added via CMS admin
+  const partners = [...GOVERNMENT_PARTNER_PORTALS, ...(content.partners || [])];
+
+  return (
   <section className="government-partners-section" aria-labelledby="government-partners-title">
     <Container>
       <div className="partners-heading">
@@ -49,16 +55,17 @@ const GovernmentPartners = () => (
 
       <div className="partner-marquee" aria-label="Official government partner portals">
         <div className="partner-track">
-          {GOVERNMENT_PARTNER_PORTALS.map((partner) => (
+          {partners.map((partner) => (
             <PartnerCard key={partner.name} partner={partner} />
           ))}
-          {GOVERNMENT_PARTNER_PORTALS.map((partner) => (
+          {partners.map((partner) => (
             <PartnerCard key={`${partner.name}-duplicate`} partner={partner} duplicate />
           ))}
         </div>
       </div>
     </Container>
   </section>
-);
+  );
+};
 
 export default GovernmentPartners;

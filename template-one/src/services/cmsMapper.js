@@ -53,6 +53,18 @@ export const mapDocuments = (apiDocs) =>
     publishDate: d.publish_date || null,
   }));
 
+/** Downloads → content.downloads */
+export const mapDownloads = (apiDownloads) =>
+  nonEmpty(apiDownloads)?.map((d) => ({
+    id: d.id,
+    title: d.title,
+    category: titleCase(d.category),
+    desc: d.description || '',
+    type: d.file_type || 'PDF',
+    meta: d.file_size_display || '',
+    fileUrl: d.file_url || null,
+  }));
+
 /** Notifications → content.notifications */
 export const mapNotifications = (apiNotes) =>
   nonEmpty(apiNotes)?.map((n) => ({
@@ -165,5 +177,9 @@ export const mapSiteSettings = (s) => {
     out.webInformationManagerDesignation = s.web_information_manager_designation;
   if (s.web_information_manager_email)
     out.webInformationManagerEmail = s.web_information_manager_email;
+  if (s.facebook_url)  out.facebookUrl  = s.facebook_url;
+  if (s.twitter_url)   out.twitterUrl   = s.twitter_url;
+  if (s.youtube_url)   out.youtubeUrl   = s.youtube_url;
+  if (s.linkedin_url)  out.linkedinUrl  = s.linkedin_url;
   return Object.keys(out).length ? out : undefined;
 };

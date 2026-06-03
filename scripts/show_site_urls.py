@@ -1,6 +1,6 @@
 """
-Called by start.bat — prints every active site URL so you know exactly
-which address to open for each site.
+Called by start.bat — prints every active site URL (public IP) so you know
+exactly which address to open for each site.
 """
 import os, sys
 
@@ -11,6 +11,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
 django.setup()
 
+from django.conf import settings
 from sites.models import Site
 
 # Read sites.conf → {folder: port}
@@ -30,12 +31,33 @@ except FileNotFoundError:
 
 default_port = list(folder_port.values())[0] if folder_port else '5173'
 
+# Get public IP from FRONTEND_BASE_URL setting
+frontend_base = getattr(settings, 'FRONTEND_BASE_URL', 'http://10.65.51.44:5173')
+# Extract just the host:port part
+from urllib.parse import urlparse
+parsed = urlparse(frontend_base)
+public_host = parsed.netloc   # e.g. 10.65.51.44:5173
+
 print()
-print('  +-------------------------------------------------+')
-print('  |           ACCESSIBLE SITES                      |')
-print('  +-------------------------------------------------+')
-for site in Site.objects.filter(is_active=True).order_by('template', 'name'):
-    port = folder_port.get(site.folder, default_port)
-    print(f'  |  {site.name:<28} [{site.key:<10}]  |')
-    print(f'  |  http://localhost:{port}/?site={site.key:<20}  |')
-    print('  +-------------------------------------------------+')
+print('  +------------------------------------------------------------+')
+print('  |                  ACCESSIBLE SITES                         |')
+print('  +------------------------------------------------------------+')
+
+sites = Site.objects.filter(is_active=True).order_by('template', 'name')
+if not sites:
+    print('  |  No active sites yet. Add sites in /admin/dashboard/       |')
+    print('  +------------------------------------------------------------+')
+else:
+    for site in sites:
+        port = folder_port.get(site.folder, default_port)
+        # Use the public IP from settings but override port from sites.conf
+        url = f'http://{parsed.hostname}:{port}/?site={site.key}'
+        name_col  = site.name[:28].ljust(28)
+        key_col   = f'[{site.key}]'.ljust(12)
+        print(f'  |  {name_col}  {key_col}  |')
+        print(f'  |  {url:<58}  |')
+        print('  +------------------------------------------------------------+')
+
+print()
+print(f'  Admin panel  ->  http://{public_host.split(":")[0]}:8000/admin/')
+print()

@@ -9,6 +9,8 @@ import Services from './components/Services';
 import Activities from './components/Activities';
 import CitizenResources from './components/CitizenResources';
 import Documents from './components/Documents';
+import Downloads from './components/Downloads';
+import Notifications from './components/Notifications';
 import Grievances, { GrievancePortalPage } from './components/Grievances';
 import Chatbot from './components/Chatbot';
 import GovernmentPartners from './components/GovernmentPartners';
@@ -106,6 +108,14 @@ const PortalApp = () => {
 
             <SectionWrapper>
               <Documents />
+            </SectionWrapper>
+
+            <SectionWrapper>
+              <Downloads />
+            </SectionWrapper>
+
+            <SectionWrapper>
+              <Notifications />
             </SectionWrapper>
 
             <SectionWrapper>

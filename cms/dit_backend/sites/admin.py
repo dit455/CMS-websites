@@ -1,11 +1,29 @@
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.utils.html import format_html, mark_safe
 from django.db.models import Count
 from .models import Site, SiteAdminProfile
 
 User = get_user_model()
+
+# All apps whose content site owners are allowed to manage
+_CONTENT_APPS = [
+    'news', 'notifications', 'services', 'hero_banner',
+    'downloads', 'documents', 'menu_manager', 'about_page', 'portal_settings',
+]
+
+
+def _grant_content_permissions(user):
+    """Grant view/add/change/delete permissions on all content models to a site owner."""
+    perms = Permission.objects.filter(content_type__app_label__in=_CONTENT_APPS)
+    user.user_permissions.set(perms)
+    # Clear the cached permissions so they take effect immediately
+    if hasattr(user, '_perm_cache'):
+        del user._perm_cache
+    if hasattr(user, '_user_perm_cache'):
+        del user._user_perm_cache
 
 TEMPLATE_COLOURS = {
     'template-one':   '#3B82F6',
@@ -130,7 +148,15 @@ class SiteAdmin(SuperuserOnlyMixin, admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if change:
-            return   # Only create owner on initial site creation
+            return   # Only seed + create owner on initial site creation
+
+        # Auto-seed default content so the new site looks populated immediately.
+        try:
+            from sites.seed_utils import seed_site_defaults
+            seed_site_defaults(obj)
+            messages.info(request, f'Default content (menu, officials, partners…) seeded for "{obj.name}".')
+        except Exception as exc:
+            messages.warning(request, f'Content seeding failed: {exc}')
 
         username = form.cleaned_data.get('owner_username', '').strip()
         password = form.cleaned_data.get('owner_password', '')
@@ -144,6 +170,9 @@ class SiteAdmin(SuperuserOnlyMixin, admin.ModelAdmin):
                 is_staff=True,
                 is_active=True,
             )
+            # Grant Django auth permissions for all content models
+            _grant_content_permissions(user)
+            # Link user to this site via SiteAdminProfile
             profile, _ = SiteAdminProfile.objects.get_or_create(user=user)
             profile.sites.add(obj)
             messages.success(

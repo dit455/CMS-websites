@@ -6,6 +6,7 @@ import {
   mapHeroSlides,
   mapServices,
   mapDocuments,
+  mapDownloads,
   mapNotifications,
   mapNewsTicker,
   mapOfficials,
@@ -30,9 +31,10 @@ const applyApiData = (base, api) => {
   apply(mapHeroSlides(api.heroSlides),         'heroSlides');
   apply(mapServices(api.services),             'services');
   apply(mapDocuments(api.documents),           'documents');
+  apply(mapDownloads(api.downloads),           'downloads');
   apply(mapNotifications(api.notifications),   'notifications');
   apply(mapNewsTicker(api.newsTicker),         'newsItems');
-  apply(mapOfficials(api.officials),           'officials');
+  apply(mapOfficials(api.officials),            'officials');
   apply(mapPartners(api.partners),             'partners');
   apply(mapStats(api.stats),                   'portalStats');
   apply(mapQuickLinks(api.quickLinks),         'quickLinks');
@@ -54,13 +56,14 @@ export const ContentProvider = ({ children }) => {
 
     async function fetchAll() {
       const [
-        heroSlides, services, documents, notifications, newsTicker,
+        heroSlides, services, documents, downloads, notifications, newsTicker,
         officials, partners, stats, quickLinks, resourceGroups,
         about, settings, menuData,
       ] = await Promise.all([
         cmsApi.heroBanners(),
         cmsApi.services(),
         cmsApi.documents(),
+        cmsApi.downloads(),
         cmsApi.notifications(),
         cmsApi.newsTicker(),
         cmsApi.officials(),
@@ -77,7 +80,7 @@ export const ContentProvider = ({ children }) => {
 
       setContent((base) =>
         applyApiData(base, {
-          heroSlides, services, documents, notifications, newsTicker,
+          heroSlides, services, documents, downloads, notifications, newsTicker,
           officials, partners, stats, quickLinks, resourceGroups, about, settings,
         })
       );

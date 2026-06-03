@@ -363,6 +363,8 @@ const defaultContent = {
       meta: '760 KB',
     },
   ],
+  downloads: [],
+  notifications: [],
 };
 
 export default defaultContent;

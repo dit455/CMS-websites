@@ -140,3 +140,7 @@ else:
         r'^https?://dit\.gov\.in$',
     ]
 CORS_ALLOW_CREDENTIALS = True
+
+# ─── Frontend public URL (used in admin navbar "View Website" link) ────────────
+# Change this if your machine IP or port changes.
+FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default='http://10.65.51.44:5173')

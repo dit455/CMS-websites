@@ -9,20 +9,24 @@ import {
   FaClipboardList,
   FaDownload,
   FaEnvelope,
+  FaFacebook,
   FaGavel,
   FaInfoCircle,
+  FaLinkedin,
   FaLink,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaProjectDiagram,
   FaServer,
+  FaTwitter,
   FaUsers,
+  FaYoutube,
 } from 'react-icons/fa';
 import { MANDATORY_FOOTER_LINKS } from '../config/portalConfig';
 import { useSiteContent } from '../content/useSiteContent';
 import siteLogo from '../assets/img/Site_logo.png';
 
-const quickLinks = [
+const defaultQuickLinks = [
   { label: 'About Us', href: '#about-detail', icon: FaInfoCircle },
   { label: 'Services', href: '#services', icon: FaLink },
   { label: 'Infrastructure', href: '#services', icon: FaServer },
@@ -75,6 +79,18 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { content } = useSiteContent();
   const { site } = content;
+  // Always show template quick links PLUS any added via CMS admin
+  const quickLinks = [
+    ...defaultQuickLinks,
+    ...(content.quickLinks || []).map((l) => ({ label: l.label, href: l.href || '#', icon: FaLink })),
+  ];
+
+  const socialLinks = [
+    site.facebookUrl && { href: site.facebookUrl, label: 'Facebook',  Icon: FaFacebook,  color: '#1877F2' },
+    site.twitterUrl  && { href: site.twitterUrl,  label: 'Twitter/X', Icon: FaTwitter,   color: '#1DA1F2' },
+    site.youtubeUrl  && { href: site.youtubeUrl,  label: 'YouTube',   Icon: FaYoutube,   color: '#FF0000' },
+    site.linkedinUrl && { href: site.linkedinUrl, label: 'LinkedIn',  Icon: FaLinkedin,  color: '#0A66C2' },
+  ].filter(Boolean);
   const emailDisplay = site.helpdeskEmailDisplay || site.helpdeskEmail;
   const utilityLinks = MANDATORY_FOOTER_LINKS.filter((link) => utilityLabels.includes(link.label));
 
@@ -160,6 +176,35 @@ const Footer = () => {
               </span>
             </address>
           </section>
+
+          {socialLinks.length > 0 && (
+            <section className="footer-modern-column" aria-labelledby="footer-social-title">
+              <h3 id="footer-social-title">
+                <FaLink aria-hidden="true" />
+                Connect With Us
+              </h3>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px' }}>
+                {socialLinks.map(({ href, label, Icon, color }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      width: 40, height: 40, borderRadius: '50%',
+                      background: color, color: '#fff', fontSize: 18,
+                      textDecoration: 'none', transition: 'opacity .15s',
+                    }}
+                  >
+                    <Icon />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </Container>
 
