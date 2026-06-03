@@ -78,6 +78,18 @@ const defaultContent = {
       description: 'Procurement references and eTendering access for vendors and departments.',
       href: '#tenders',
     },
+    {
+      icon: 'infrastructure',
+      title: 'IT Infrastructure',
+      description: 'PSWAN, State Data Centre, cloud hosting, and network enablement services.',
+      href: '#services',
+    },
+    {
+      icon: 'helpdesk',
+      title: 'Helpdesk Support',
+      description: 'Assistance for service access, technical queries, grievances, and follow-up.',
+      href: '#grievances',
+    },
   ],
   portalStats: [
     { value: '24x7', label: 'Digital access' },

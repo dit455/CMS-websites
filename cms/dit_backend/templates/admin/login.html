@@ -1,0 +1,189 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  body { background: #f0f4f8 !important; }
+
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+  }
+
+  .login-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+  }
+
+  .login-hero {
+    background: linear-gradient(135deg, #1e3a5f, #2563eb);
+    padding: 32px 32px 24px;
+    text-align: center;
+    color: #fff;
+  }
+  .login-hero .emblem { font-size: 40px; margin-bottom: 8px; }
+  .login-hero h1 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .login-hero p  { font-size: 13px; opacity: .8; margin: 0; }
+
+  .role-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .role-tab {
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all .15s;
+    user-select: none;
+  }
+  .role-tab.active   { color: #2563eb; border-bottom-color: #2563eb; }
+  .role-tab .icon    { font-size: 20px; display: block; margin-bottom: 4px; }
+  .role-tab:hover:not(.active) { color: #334155; }
+
+  .role-hint {
+    display: none;
+    background: #f8fafc;
+    border-left: 4px solid #2563eb;
+    margin: 0 24px;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: #475569;
+    margin-bottom: 4px;
+  }
+  .role-hint.show { display: block; }
+
+  .login-form-wrap { padding: 20px 32px 32px; }
+
+  .login-form-wrap .form-row { margin-bottom: 16px; }
+  .login-form-wrap label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: #374151; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px;
+  }
+  .login-form-wrap input[type=text],
+  .login-form-wrap input[type=password] {
+    width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0;
+    border-radius: 8px; font-size: 14px; box-sizing: border-box;
+    transition: border-color .15s; outline: none;
+  }
+  .login-form-wrap input:focus { border-color: #2563eb; }
+
+  .login-btn {
+    width: 100%; padding: 12px;
+    background: linear-gradient(135deg, #1e3a5f, #2563eb);
+    color: #fff; border: none; border-radius: 8px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: opacity .15s;
+  }
+  .login-btn:hover { opacity: .9; }
+
+  .errornote {
+    background: #fef2f2; border: 1px solid #fca5a5;
+    color: #dc2626; border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 16px; font-size: 13px;
+  }
+
+  .login-footer {
+    text-align: center; padding: 0 32px 20px;
+    font-size: 11px; color: #94a3b8;
+  }
+</style>
+{% endblock %}
+
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div class="login-wrap">
+  <div class="login-card">
+
+    <div class="login-hero">
+      <div class="emblem">🏛️</div>
+      <h1>DIT Puducherry CMS</h1>
+      <p>Government of Puducherry — Content Management System</p>
+    </div>
+
+    <!-- Role Tabs -->
+    <div class="role-tabs">
+      <div class="role-tab active" id="tab-super" onclick="setRole('super')">
+        <span class="icon">👑</span>
+        Super Admin
+      </div>
+      <div class="role-tab" id="tab-dept" onclick="setRole('dept')">
+        <span class="icon">🏢</span>
+        Department Admin
+      </div>
+    </div>
+
+    <!-- Role hints -->
+    <div style="padding: 12px 24px 0;">
+      <div class="role-hint show" id="hint-super">
+        Full access to all 50 sites, templates, and user management.
+      </div>
+      <div class="role-hint" id="hint-dept">
+        Access limited to your assigned department site(s) only.
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-form-wrap">
+      {% if form.errors %}
+      <div class="errornote">
+        ⚠️ Incorrect username or password. Please try again.
+      </div>
+      {% endif %}
+
+      <form method="post" id="login-form" action="{{ app_path }}">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" id="id_username"
+                 autofocus autocomplete="username"
+                 value="{{ form.username.value|default:'' }}"
+                 placeholder="Enter your username">
+        </div>
+
+        <div class="form-row">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" id="id_password"
+                 autocomplete="current-password"
+                 placeholder="Enter your password">
+        </div>
+
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="login-btn">Sign In →</button>
+      </form>
+    </div>
+
+    <div class="login-footer">
+      Secure access · Government of Puducherry
+    </div>
+
+  </div>
+</div>
+
+<script>
+function setRole(role) {
+  document.getElementById('tab-super').classList.toggle('active', role === 'super');
+  document.getElementById('tab-dept').classList.toggle('active', role === 'dept');
+  document.getElementById('hint-super').classList.toggle('show', role === 'super');
+  document.getElementById('hint-dept').classList.toggle('show', role === 'dept');
+}
+</script>
+{% endblock %}

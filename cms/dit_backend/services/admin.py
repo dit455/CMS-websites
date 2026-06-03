@@ -1,4 +1,5 @@
 from django.contrib import admin
+from sites.admin_mixins import SiteScopedAdminMixin
 from .models import Service, ServiceLink
 
 
@@ -7,20 +8,23 @@ class ServiceLinkInline(admin.TabularInline):
     extra    = 2
     fields   = ['label', 'href', 'order']
     ordering = ['order']
-    verbose_name = "Button Link"
+    verbose_name        = "Button Link"
     verbose_name_plural = "Button Links (shown on the card)"
 
 
 @admin.register(Service)
-class ServiceAdmin(admin.ModelAdmin):
-    list_display = ['site', 'order', 'title', 'icon', 'accent_color', 'is_active']
-    list_filter = ['site']
+class ServiceAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ['site', 'order', 'title', 'icon', 'accent_color', 'is_active']
+    list_filter        = ['site']
     list_display_links = ['title']
     list_editable      = ['order', 'is_active']
     search_fields      = ['title', 'desc']
     inlines            = [ServiceLinkInline]
     ordering           = ['order']
     fieldsets = (
+        ('Site', {
+            'fields': ('site',),
+        }),
         ('Service Details', {
             'fields': ('title', 'desc', 'icon'),
         }),

@@ -1,10 +1,14 @@
 from django.contrib import admin
+from sites.admin_mixins import SiteScopedAdminMixin
 from .models import AboutPage, MissionPoint, KeyFunction, InitiativeFocusPoint
 
 
 @admin.register(AboutPage)
-class AboutPageAdmin(admin.ModelAdmin):
+class AboutPageAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
     fieldsets = (
+        ('Site', {
+            'fields': ('site',),
+        }),
         ('Hero Section (Top Banner)', {
             'fields': ('hero_kicker', 'hero_title', 'hero_description'),
             'description': 'Controls the big title at the top of the About page.'
@@ -30,23 +34,22 @@ class AboutPageAdmin(admin.ModelAdmin):
         }),
     )
     list_display = ('__str__', 'site')
-    list_filter = ('site',)
+    list_filter  = ('site',)
 
     def has_delete_permission(self, request, obj=None):
         return True
 
 
 @admin.register(MissionPoint)
-class MissionPointAdmin(admin.ModelAdmin):
+class MissionPointAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
     list_display  = ['text', 'site', 'order', 'is_active']
     list_editable = ['is_active']
     list_filter   = ['site']
     ordering      = ['order']
-    verbose_name  = 'Mission Point'
 
 
 @admin.register(KeyFunction)
-class KeyFunctionAdmin(admin.ModelAdmin):
+class KeyFunctionAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
     list_display  = ['text', 'site', 'order', 'is_active']
     list_editable = ['is_active']
     list_filter   = ['site']
@@ -54,7 +57,7 @@ class KeyFunctionAdmin(admin.ModelAdmin):
 
 
 @admin.register(InitiativeFocusPoint)
-class InitiativeFocusPointAdmin(admin.ModelAdmin):
+class InitiativeFocusPointAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
     list_display  = ['text', 'site', 'order', 'is_active']
     list_editable = ['is_active']
     list_filter   = ['site']

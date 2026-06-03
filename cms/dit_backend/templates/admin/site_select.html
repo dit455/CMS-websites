@@ -1,0 +1,72 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Select Site — DIT CMS{% endblock %}
+
+{% block content %}
+<style>
+  .picker-wrap       { max-width:1100px; margin:32px auto; padding:0 16px; }
+  .picker-heading    { font-size:22px; font-weight:700; color:#1e293b; margin-bottom:6px; }
+  .picker-sub        { color:#64748b; margin-bottom:32px; font-size:14px; }
+  .tpl-group         { margin-bottom:36px; }
+  .tpl-label         { display:inline-block; padding:4px 14px; border-radius:20px;
+                       color:#fff; font-size:12px; font-weight:700; margin-bottom:14px; }
+  .sites-grid        { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+                       gap:14px; }
+  .site-card         { background:#fff; border:2px solid #e2e8f0; border-radius:12px;
+                       padding:18px 20px; cursor:pointer; transition:all .18s;
+                       text-align:left; width:100%; font-family:inherit; }
+  .site-card:hover   { border-color:var(--c); box-shadow:0 4px 16px rgba(0,0,0,.1);
+                       transform:translateY(-2px); }
+  .site-card-name    { font-size:15px; font-weight:700; color:#1e293b; margin-bottom:4px; }
+  .site-card-key     { font-size:12px; color:#94a3b8; font-family:monospace; }
+  .site-card-domain  { font-size:12px; color:#64748b; margin-top:6px; }
+  .dot               { width:10px; height:10px; border-radius:50%; display:inline-block;
+                       margin-right:8px; vertical-align:middle; }
+  .empty-msg         { background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px;
+                       padding:40px; text-align:center; color:#94a3b8; font-size:15px; }
+</style>
+
+<div class="picker-wrap">
+  <p class="picker-heading">Which site do you want to manage today?</p>
+  <p class="picker-sub">
+    {% if request.user.is_superuser %}
+      You are logged in as <strong>superadmin</strong>. Select any site below.
+    {% else %}
+      You have access to the sites listed below. Click one to start editing.
+    {% endif %}
+  </p>
+
+  {% if grouped_sites %}
+    {% for group in grouped_sites %}
+    <div class="tpl-group">
+      <span class="tpl-label" style="background:{{ group.colour }}">
+        {{ group.label }}
+      </span>
+      <div class="sites-grid">
+        {% for site in group.sites %}
+        <form method="post" style="display:contents">
+          {% csrf_token %}
+          <input type="hidden" name="site_key" value="{{ site.key }}">
+          <button type="submit" class="site-card"
+                  style="--c:{{ group.colour }}; border-left:4px solid {{ group.colour }}">
+            <span class="dot" style="background:{{ group.colour }}"></span>
+            <span class="site-card-name">{{ site.name }}</span><br>
+            <span class="site-card-key">{{ site.key }}</span>
+            {% if site.domain %}
+            <div class="site-card-domain">🌐 {{ site.domain }}</div>
+            {% endif %}
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+  {% else %}
+    <div class="empty-msg">
+      <p>No sites assigned to your account yet.</p>
+      <p>Ask the superadmin to assign you to a site in<br>
+         <strong>Sites → Site Admins</strong>.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { GOVERNMENT_PARTNER_PORTALS } from '../config/portalConfig';
-import { useSiteContent } from '../content/useSiteContent';
 
 const PartnerCard = ({ partner, duplicate = false }) => {
   const [imageFailed, setImageFailed] = useState(false);
@@ -41,33 +40,25 @@ const PartnerCard = ({ partner, duplicate = false }) => {
   );
 };
 
-const GovernmentPartners = () => {
-  const { content } = useSiteContent();
-  const partners =
-    Array.isArray(content.partners) && content.partners.length > 0
-      ? content.partners
-      : GOVERNMENT_PARTNER_PORTALS;
+const GovernmentPartners = () => (
+  <section className="government-partners-section" aria-labelledby="government-partners-title">
+    <Container>
+      <div className="partners-heading">
+        <h2 id="government-partners-title">Connected Government Platforms</h2>
+      </div>
 
-  return (
-    <section className="government-partners-section" aria-labelledby="government-partners-title">
-      <Container>
-        <div className="partners-heading">
-          <h2 id="government-partners-title">Connected Government Platforms</h2>
+      <div className="partner-marquee" aria-label="Official government partner portals">
+        <div className="partner-track">
+          {GOVERNMENT_PARTNER_PORTALS.map((partner) => (
+            <PartnerCard key={partner.name} partner={partner} />
+          ))}
+          {GOVERNMENT_PARTNER_PORTALS.map((partner) => (
+            <PartnerCard key={`${partner.name}-duplicate`} partner={partner} duplicate />
+          ))}
         </div>
-
-        <div className="partner-marquee" aria-label="Official government partner portals">
-          <div className="partner-track">
-            {partners.map((partner) => (
-              <PartnerCard key={partner.name} partner={partner} />
-            ))}
-            {partners.map((partner) => (
-              <PartnerCard key={`${partner.name}-duplicate`} partner={partner} duplicate />
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-};
+      </div>
+    </Container>
+  </section>
+);
 
 export default GovernmentPartners;

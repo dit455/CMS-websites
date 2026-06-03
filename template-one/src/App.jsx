@@ -9,7 +9,7 @@ import Services from './components/Services';
 import Activities from './components/Activities';
 import CitizenResources from './components/CitizenResources';
 import Documents from './components/Documents';
-import Grievances from './components/Grievances';
+import Grievances, { GrievancePortalPage } from './components/Grievances';
 import Chatbot from './components/Chatbot';
 import GovernmentPartners from './components/GovernmentPartners';
 import Footer from './components/Footer';
@@ -52,12 +52,13 @@ const PortalApp = () => {
   const isCms = CMS_ENABLED && hash === '#cms';
   const isAboutDetail = hash === '#about-detail';
   const isServicesDetail = hash === '#services-detail';
+  const isGrievancePortal = hash === '#grievance-portal';
 
   useEffect(() => {
-    if (isAboutDetail || isServicesDetail) {
+    if (isAboutDetail || isServicesDetail || isGrievancePortal) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [isAboutDetail, isServicesDetail]);
+  }, [isAboutDetail, isGrievancePortal, isServicesDetail]);
 
   return (
     <div className="App bg-light">
@@ -74,6 +75,8 @@ const PortalApp = () => {
           <AboutDetailPage />
         ) : isServicesDetail ? (
           <ServicesDetailPage />
+        ) : isGrievancePortal ? (
+          <GrievancePortalPage />
         ) : (
           <>
             <NewsTicker />

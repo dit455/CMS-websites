@@ -40,10 +40,10 @@ const Officials = () => {
             <Card className="text-center border-0 shadow-soft h-100 rounded-4 p-4 lift-on-hover border-top border-danger border-4">
               <div className="position-relative d-inline-block mx-auto mb-4">
                 <div className="position-absolute bg-danger rounded-circle opacity-10" style={{ width: '150px', height: '150px', top: '-10px', left: '-10px', zIndex: 0 }}></div>
-                {(official.photoUrl || officialImages[official.imageKey]) ? (
+                {officialImages[official.imageKey] ? (
                   <Card.Img
                     variant="top"
-                    src={official.photoUrl || officialImages[official.imageKey]}
+                    src={officialImages[official.imageKey]}
                     alt={`${official.name}, ${official.role}`}
                     loading="lazy"
                     className="rounded-circle position-relative object-fit-cover shadow-sm border border-white border-4"
@@ -61,7 +61,7 @@ const Officials = () => {
                 
                 <div className="d-flex justify-content-center gap-3 border-top pt-3">
                   <a
-                    href={`mailto:${official.email || site.helpdeskEmail}`}
+                    href={`mailto:${site.helpdeskEmail}`}
                     className="btn btn-link text-secondary p-0"
                     aria-label={`Email office regarding ${official.name}`}
                   >

@@ -1,18 +1,22 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from sites.admin_mixins import SiteScopedAdminMixin
 from .models import HeroBanner
 
 
 @admin.register(HeroBanner)
-class HeroBannerAdmin(admin.ModelAdmin):
-    list_display = ['site', 'order', 'slide_preview', 'title', 'variant', 'is_active']
-    list_filter = ['site']
+class HeroBannerAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ['site', 'order', 'slide_preview', 'title', 'variant', 'is_active']
+    list_filter        = ['site']
     list_display_links = ['title']
     list_editable      = ['order', 'is_active']
     search_fields      = ['title', 'kicker']
     ordering           = ['order']
 
     fieldsets = (
+        ('Site', {
+            'fields': ('site',),
+        }),
         ('Slide Content', {
             'fields': ('kicker', 'title', 'description', 'image'),
             'description': 'Kicker = small label above title. Image: 1920×600 px recommended.'

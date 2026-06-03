@@ -12,9 +12,13 @@
 export const API_BASE =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
-// Which website this build represents. The backend filters all content by this
-// key, so the same template can power many sites just by changing VITE_SITE_KEY.
-export const SITE_KEY = import.meta.env.VITE_SITE_KEY || '';
+// Which website this build represents.
+// Priority: ?site= URL param (dev switching) → build-time VITE_SITE_KEY (.env) → empty
+// This lets you open  ?site=health  and  ?site=site2  from the same dev server.
+export const SITE_KEY =
+  new URLSearchParams(window.location.search).get('site') ||
+  import.meta.env.VITE_SITE_KEY ||
+  '';
 
 /** Append the site key to a path's query string (if a key is configured). */
 function withSite(path) {

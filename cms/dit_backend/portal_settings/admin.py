@@ -1,30 +1,31 @@
 from django.contrib import admin
+from sites.admin_mixins import SiteScopedAdminMixin
 from .models import (Official, Partner, SiteSetting, PortalStat, QuickLink,
                      ResourceGroup, ResourcePoint)
 
 
 @admin.register(Official)
-class OfficialAdmin(admin.ModelAdmin):
-    list_display = ('site', 'order', 'name', 'role', 'is_active')
-    list_filter = ('site',)
-    list_editable = ('is_active',)
+class OfficialAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ('site', 'order', 'name', 'role', 'is_active')
+    list_filter        = ('site',)
+    list_editable      = ('is_active',)
     list_display_links = ('name',)
-    search_fields = ('name', 'role')
+    search_fields      = ('name', 'role')
 
 
 @admin.register(Partner)
-class PartnerAdmin(admin.ModelAdmin):
-    list_display = ('site', 'order', 'name', 'tone', 'is_active')
-    list_filter = ('site',)
-    list_editable = ('is_active',)
+class PartnerAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ('site', 'order', 'name', 'tone', 'is_active')
+    list_filter        = ('site',)
+    list_editable      = ('is_active',)
     list_display_links = ('name',)
-    search_fields = ('name',)
+    search_fields      = ('name',)
 
 
 @admin.register(SiteSetting)
-class SiteSettingAdmin(admin.ModelAdmin):
+class SiteSettingAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
     list_display = ('__str__', 'site')
-    list_filter = ('site',)
+    list_filter  = ('site',)
     fieldsets = (
         ('Site', {'fields': ('site',)}),
         ('Department', {'fields': ('department_name', 'government_name')}),
@@ -38,18 +39,18 @@ class SiteSettingAdmin(admin.ModelAdmin):
 
 
 @admin.register(PortalStat)
-class PortalStatAdmin(admin.ModelAdmin):
-    list_display = ('site', 'order', 'value', 'label', 'is_active')
-    list_filter = ('site',)
-    list_editable = ('is_active',)
+class PortalStatAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ('site', 'order', 'value', 'label', 'is_active')
+    list_filter        = ('site',)
+    list_editable      = ('is_active',)
     list_display_links = ('value',)
 
 
 @admin.register(QuickLink)
-class QuickLinkAdmin(admin.ModelAdmin):
-    list_display = ('site', 'order', 'label', 'href', 'is_active')
-    list_filter = ('site',)
-    list_editable = ('is_active',)
+class QuickLinkAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ('site', 'order', 'label', 'href', 'is_active')
+    list_filter        = ('site',)
+    list_editable      = ('is_active',)
     list_display_links = ('label',)
 
 
@@ -59,10 +60,10 @@ class ResourcePointInline(admin.TabularInline):
 
 
 @admin.register(ResourceGroup)
-class ResourceGroupAdmin(admin.ModelAdmin):
-    list_display = ('site', 'order', 'title', 'slug', 'is_active')
-    list_filter = ('site',)
-    list_editable = ('is_active',)
+class ResourceGroupAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ('site', 'order', 'title', 'slug', 'is_active')
+    list_filter        = ('site',)
+    list_editable      = ('is_active',)
     list_display_links = ('title',)
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ResourcePointInline]

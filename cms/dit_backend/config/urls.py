@@ -10,6 +10,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
+from sites.views_admin import site_select, site_switch, superadmin_dashboard, manage_content
 
 # Customize the Admin panel header
 admin.site.site_header = "DIT Puducherry CMS"
@@ -17,7 +19,16 @@ admin.site.site_title = "DIT Admin Portal"
 admin.site.index_title = "Content Management"
 
 urlpatterns = [
-    # Django Admin Panel (full CMS at /admin/)
+    # Root → redirect to admin
+    path('', RedirectView.as_view(url='/admin/', permanent=False)),
+
+    # Custom admin views — must be BEFORE admin.site.urls
+    path('admin/dashboard/',      superadmin_dashboard, name='admin_dashboard'),
+    path('admin/manage-content/', manage_content,       name='admin_manage_content'),
+    path('admin/select-site/',    site_select,          name='admin_site_select'),
+    path('admin/switch-site/',    site_switch,          name='admin_site_switch'),
+
+    # Django Admin Panel
     path('admin/', admin.site.urls),
 
     # API Routes — each app handles its own sub-routes

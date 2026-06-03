@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Navbar, Nav, Container, Form, FormControl, Button, NavDropdown } from 'react-bootstrap';
 import {
   FaUser,
-  FaUserCircle,
   FaUniversalAccess,
   FaSearch,
   FaMicrophone,
@@ -16,75 +15,25 @@ import {
   FaGavel,
   FaDownload,
   FaEnvelope,
-  FaMoon,
-  FaSun,
   FaAdjust,
-  FaChevronDown,
   FaChevronRight,
   FaBars,
   FaLanguage,
   FaUniversalAccess as FaScreenReader,
   FaEllipsisH,
-  FaShieldAlt,
-  FaUsers,
-  FaNewspaper,
-  FaLink,
 } from 'react-icons/fa';
 import emblemLogo from '../assets/img/emblem.png';
 import siteLogo from '../assets/img/Site_logo.png';
 import { CMS_ENABLED } from '../config/portalConfig';
 import { useSiteContent } from '../content/useSiteContent';
 
-// Maps the icon string stored in Django (e.g. "FaHome") → a React icon element.
-const ICON_MAP = {
-  FaHome: <FaHome size={14} />,
-  FaInfoCircle: <FaInfoCircle size={14} />,
-  FaCogs: <FaCogs size={14} />,
-  FaFileAlt: <FaFileAlt size={14} />,
-  FaBell: <FaBell size={14} />,
-  FaBriefcase: <FaBriefcase size={14} />,
-  FaComments: <FaComments size={14} />,
-  FaDownload: <FaDownload size={14} />,
-  FaEnvelope: <FaEnvelope size={14} />,
-  FaGavel: <FaGavel size={14} />,
-  FaEllipsisH: <FaEllipsisH size={14} />,
-  FaChevronRight: <FaChevronRight size={12} />,
-  FaShieldAlt: <FaShieldAlt size={14} />,
-  FaUsers: <FaUsers size={14} />,
-  FaNewspaper: <FaNewspaper size={14} />,
-  FaLink: <FaLink size={14} />,
-};
-
-// Hardcoded menu used when the CMS menu API is unavailable.
-const FALLBACK_NAV = [
-  { href: '#', label: 'Home', icon: <FaHome size={14} /> },
-  { href: '#about-detail', label: 'About Us', icon: <FaInfoCircle size={14} /> },
-  { href: '#services', label: 'Services', icon: <FaCogs size={14} /> },
-  { href: '#documents', label: 'Documents', icon: <FaFileAlt size={14} /> },
-  { href: '#notifications', label: 'Notifications', icon: <FaBell size={14} />, badge: 'Live' },
-  { href: '#tenders', label: 'Tenders', icon: <FaFileAlt size={14} /> },
-  { href: '#rti', label: 'RTI', icon: <FaGavel size={14} />, badge: 'Info' },
-  {
-    href: '#more',
-    label: 'More',
-    icon: <FaEllipsisH size={14} />,
-    children: [
-      { href: '#eodb', label: 'EoDB', icon: <FaBriefcase size={14} /> },
-      { href: '#grievances', label: 'Grievances', icon: <FaComments size={14} /> },
-      { href: '#downloads', label: 'Downloads', icon: <FaDownload size={14} />, badge: 'PDF' },
-      { href: '#contact', label: 'Contact', icon: <FaEnvelope size={14} /> },
-    ],
-  },
-];
-
 const Header = () => {
-  const { content, menu } = useSiteContent();
+  const { content } = useSiteContent();
   const { site } = content;
   const [expanded, setExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMessage, setSearchMessage] = useState('');
   const [activeHash, setActiveHash] = useState('#');
-  const [theme, setTheme] = useState(() => window.localStorage.getItem('dit-portal-theme') || 'light');
   const [fontScale, setFontScale] = useState(() => Number(window.localStorage.getItem('dit-portal-font-scale')) || 100);
   const [highContrast, setHighContrast] = useState(() => window.localStorage.getItem('dit-portal-contrast') === 'high');
   const [language, setLanguage] = useState(() => window.localStorage.getItem('dit-portal-language') || 'en');
@@ -101,30 +50,29 @@ const Header = () => {
     [content.services],
   );
 
-  const navLinks = useMemo(() => {
-    if (Array.isArray(menu) && menu.length > 0) {
-      const toIcon = (name) => ICON_MAP[name] || <FaChevronRight size={12} />;
-      return menu.map((item) => ({
-        href: item.href || '#',
-        label: item.label,
-        icon: toIcon(item.icon),
-        badge: item.badge || undefined,
-        isMegaMenu: item.is_mega_menu,
-        openInNewTab: item.open_in_new_tab,
-        children:
-          Array.isArray(item.children) && item.children.length > 0
-            ? item.children.map((child) => ({
-                href: child.href || '#',
-                label: child.label,
-                icon: toIcon(child.icon),
-                badge: child.badge || undefined,
-                openInNewTab: child.open_in_new_tab,
-              }))
-            : undefined,
-      }));
-    }
-    return FALLBACK_NAV;
-  }, [menu]);
+  const navLinks = useMemo(
+    () => [
+      { href: '#', label: 'Home', icon: <FaHome size={14} /> },
+      { href: '#about-detail', label: 'About Us', icon: <FaInfoCircle size={14} /> },
+      { href: '#services', label: 'Services', icon: <FaCogs size={14} /> },
+      { href: '#documents', label: 'Documents', icon: <FaFileAlt size={14} /> },
+      { href: '#notifications', label: 'Notifications', icon: <FaBell size={14} />, badge: 'Live' },
+      { href: '#tenders', label: 'Tenders', icon: <FaFileAlt size={14} /> },
+      { href: '#rti', label: 'RTI', icon: <FaGavel size={14} />, badge: 'Info' },
+      {
+        href: '#more',
+        label: 'More',
+        icon: <FaEllipsisH size={14} />,
+        children: [
+          { href: '#eodb', label: 'EoDB', icon: <FaBriefcase size={14} /> },
+          { href: '#grievances', label: 'Grievances', icon: <FaComments size={14} /> },
+          { href: '#downloads', label: 'Downloads', icon: <FaDownload size={14} />, badge: 'PDF' },
+          { href: '#contact', label: 'Contact', icon: <FaEnvelope size={14} /> },
+        ],
+      },
+    ],
+    [],
+  );
 
   const searchableNavLinks = useMemo(
     () => navLinks.flatMap((link) => (link.children ? link.children : [link])),
@@ -137,11 +85,6 @@ const Header = () => {
     window.addEventListener('hashchange', updateActiveHash);
     return () => window.removeEventListener('hashchange', updateActiveHash);
   }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem('dit-portal-theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     document.documentElement.style.fontSize = fontScale === 100 ? '' : `${fontScale}%`;
@@ -375,33 +318,6 @@ const Header = () => {
             <a href="#contact" className="utility-link">
               <FaEnvelope size={11} /> CONTACT
             </a>
-            <button
-              type="button"
-              className="dark-toggle"
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-            >
-              {theme === 'dark' ? <FaSun size={11} /> : <FaMoon size={11} />}
-              <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
-            </button>
-            <button
-              type="button"
-              className="utility-icon-button"
-              aria-label="Open profile access information"
-              onClick={() => {
-                window.location.hash = CMS_ENABLED ? '#cms' : '#contact';
-              }}
-            >
-              <FaUserCircle size={15} />
-            </button>
-            <button
-              type="button"
-              className="utility-icon-button"
-              aria-label="Focus portal search"
-              onClick={() => searchInputRef.current?.focus()}
-            >
-              <FaSearch size={13} />
-            </button>
           </div>
         </Container>
       </div>
@@ -459,15 +375,6 @@ const Header = () => {
             </Form>
 
             <div className="masthead-action-row">
-              <button type="button" className="masthead-icon-button" title="Notifications" aria-label="View notifications">
-                <FaBell size={16} />
-              </button>
-              <button type="button" className="masthead-icon-button" title="Profile" aria-label="Open profile access information">
-                <FaUserCircle size={17} />
-              </button>
-              <button type="button" className="portal-menu-button" aria-label="Open portal access menu">
-                <FaUser size={13} /> PORTAL <FaChevronDown size={11} />
-              </button>
               <button
                 type="button"
                 className="header-menu-toggle d-lg-none"
@@ -513,9 +420,9 @@ const Header = () => {
             </Form>
             <Nav className="portal-primary-nav">
               {navLinks.map((link) => (
-                (link.isMegaMenu || link.label === 'Services') ? (
+                link.label === 'Services' ? (
                   <NavDropdown
-                    key={`${link.label}-${link.href}`}
+                    key={link.href}
                     id="services-nav-dropdown"
                     className={`portal-nav-dropdown ${isActiveLink(link.href) ? 'active' : ''}`}
                     title={(
@@ -554,7 +461,7 @@ const Header = () => {
                   </NavDropdown>
                 ) : link.children ? (
                   <NavDropdown
-                    key={`${link.label}-${link.href}`}
+                    key={link.href}
                     id="more-nav-dropdown"
                     className={`portal-nav-dropdown ${isActiveLink(link.href, link.children) ? 'active' : ''}`}
                     title={(
@@ -582,7 +489,7 @@ const Header = () => {
                   </NavDropdown>
                 ) : (
                   <Nav.Link
-                    key={`${link.label}-${link.href}`}
+                    key={link.href}
                     href={link.href}
                     className={`portal-nav-link ${isActiveLink(link.href) ? 'active' : ''}`}
                     onClick={(event) => handleNavClick(event, link.href)}

@@ -1,12 +1,6 @@
 import { Carousel, Container, Button } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import {
-  FaLaptopCode,
-  FaFileInvoice,
-  FaBullhorn,
-  FaCloudDownloadAlt,
-  FaArrowRight,
-} from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
 import hero1 from '../assets/img/It hero banner.png';
 import hero2 from '../assets/img/ditdi11022024r.png';
 import { useSiteContent } from '../content/useSiteContent';
@@ -14,19 +8,13 @@ import { useSiteContent } from '../content/useSiteContent';
 const MotionDiv = motion.div;
 
 const heroImages = { hero1, hero2 };
-const quickLinkIcons = {
-  laptop: <FaLaptopCode size={20} />,
-  fileInvoice: <FaFileInvoice size={20} />,
-  bullhorn: <FaBullhorn size={20} />,
-  download: <FaCloudDownloadAlt size={20} />,
-};
 
 const HeroSlider = () => {
   const { content } = useSiteContent();
 
   return (
     <section className="hero-shell position-relative">
-      <Carousel fade className="hero-carousel overflow-hidden shadow-sm" indicators interval={6000} controls={true} prevLabel="Previous slide" nextLabel="Next slide">
+      <Carousel fade className="hero-carousel overflow-hidden shadow-sm" indicators interval={6000} controls={false}>
         {content.heroSlides.map((slide) => (
           <Carousel.Item key={slide.id}>
             <div
@@ -103,37 +91,6 @@ const HeroSlider = () => {
             </div>
           ))}
         </MotionDiv>
-
-        <MotionDiv
-          className="d-flex flex-wrap gap-3 justify-content-center align-items-stretch"
-          style={{ marginTop: '16px' }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-        >
-          {content.quickLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="quick-link-card text-decoration-none text-dark transition-all"
-              style={{ minWidth: '220px', flex: '1 1 auto', maxWidth: '280px' }}
-            >
-              <div className="d-flex align-items-center gap-3">
-                <div
-                  className="quick-link-icon d-flex align-items-center justify-content-center"
-                  style={{ '--quick-link-accent': link.accent, '--quick-link-surface': link.surface }}
-                >
-                  {quickLinkIcons[link.icon] || quickLinkIcons.laptop}
-                </div>
-                <div>
-                  <div className="fs-6 fw-bold">{link.label}</div>
-                  <div className="quick-link-caption">{link.caption}</div>
-                </div>
-              </div>
-              <FaArrowRight size={14} className="quick-link-arrow" />
-            </a>
-          ))}
-        </MotionDiv>
       </Container>
 
       <style jsx="true">{`
@@ -153,28 +110,6 @@ const HeroSlider = () => {
         .transition-all {
           transition: all 0.3s ease;
         }
-        .hero-carousel .carousel-control-prev,
-        .hero-carousel .carousel-control-next {
-          width: 50px;
-          height: 50px;
-          background: rgba(255, 255, 255, 0.15);
-          border: 2px solid rgba(255, 255, 255, 0.4);
-          border-radius: 50%;
-          top: 50%;
-          transform: translateY(-50%);
-          opacity: 1;
-          backdrop-filter: blur(4px);
-          transition: background 0.2s;
-          z-index: 5;
-        }
-        .hero-carousel .carousel-control-prev { left: 20px; }
-        .hero-carousel .carousel-control-next { right: 20px; }
-        .hero-carousel .carousel-control-prev:hover,
-        .hero-carousel .carousel-control-next:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
-        .hero-carousel .carousel-control-prev-icon,
-        .hero-carousel .carousel-control-next-icon { width: 18px; height: 18px; }
       `}</style>
     </section>
   );

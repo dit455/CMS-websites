@@ -1,0 +1,158 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Dashboard — DIT CMS{% endblock %}
+
+{% block content %}
+<style>
+  .dash { max-width:1200px; margin:0 auto; padding:24px 16px; }
+
+  /* Header */
+  .dash-header { display:flex; align-items:center; justify-content:space-between;
+                 margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .dash-header h1 { font-size:22px; font-weight:700; color:#1e293b; margin:0; }
+  .btn-create { background:#2563eb; color:#fff; padding:10px 22px;
+                border-radius:8px; text-decoration:none; font-weight:700;
+                font-size:14px; display:inline-flex; align-items:center; gap:6px; }
+  .btn-create:hover { background:#1d4ed8; color:#fff; }
+
+  /* Stats */
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+           margin-bottom:28px; }
+  .stat-card { background:#fff; border-radius:10px; padding:16px 20px;
+               box-shadow:0 1px 4px rgba(0,0,0,.08); text-align:center; }
+  .stat-card .num  { font-size:28px; font-weight:800; color:#2563eb; }
+  .stat-card .lbl  { font-size:12px; color:#64748b; margin-top:2px; }
+
+  /* Empty state */
+  .empty { background:#f8fafc; border:2px dashed #cbd5e1; border-radius:12px;
+           padding:60px 24px; text-align:center; }
+  .empty h2 { color:#475569; margin-bottom:8px; }
+  .empty p  { color:#94a3b8; margin-bottom:20px; }
+
+  /* Template group */
+  .tpl-group { margin-bottom:32px; }
+  .tpl-heading { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .tpl-badge { padding:4px 14px; border-radius:20px; color:#fff;
+               font-size:12px; font-weight:700; }
+  .tpl-count { font-size:13px; color:#64748b; }
+
+  /* Site cards grid */
+  .sites-grid { display:grid;
+                grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+                gap:16px; }
+
+  .site-card { background:#fff; border-radius:12px; border:1px solid #e2e8f0;
+               border-left:4px solid var(--c); overflow:hidden;
+               box-shadow:0 1px 4px rgba(0,0,0,.06);
+               transition:box-shadow .15s; }
+  .site-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.12); }
+
+  .site-card-body { padding:16px 18px; }
+  .site-name { font-size:15px; font-weight:700; color:#1e293b; margin-bottom:2px; }
+  .site-key  { font-family:monospace; font-size:11px; color:#94a3b8;
+               background:#f1f5f9; padding:1px 6px; border-radius:4px; }
+  .site-domain { font-size:12px; color:#64748b; margin-top:6px; }
+  .site-meta { display:flex; gap:10px; margin-top:8px; font-size:12px; color:#64748b; }
+  .badge-active   { background:#d1fae5; color:#065f46; padding:1px 8px;
+                    border-radius:10px; font-size:11px; font-weight:600; }
+  .badge-inactive { background:#fef3c7; color:#92400e; padding:1px 8px;
+                    border-radius:10px; font-size:11px; font-weight:600; }
+
+  .site-card-actions { display:grid; grid-template-columns:1fr 1fr;
+                        border-top:1px solid #f1f5f9; }
+  .action-btn { padding:10px; text-align:center; font-size:12px; font-weight:600;
+                text-decoration:none; color:#475569; transition:background .12s;
+                border:none; cursor:pointer; font-family:inherit; background:transparent;
+                width:100%; }
+  .action-btn:hover { background:#f8fafc; color:#1e293b; }
+  .action-btn.primary { color:#2563eb; border-left:1px solid #f1f5f9; }
+  .action-btn.primary:hover { background:#eff6ff; }
+</style>
+
+<div class="dash">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <h1>🌐 Website Management Dashboard</h1>
+    <a href="/admin/sites/site/add/" class="btn-create">＋ Create New Website</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num">{{ total_sites }}</div>
+      <div class="lbl">Total Websites</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ total_active }}</div>
+      <div class="lbl">Active</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ total_templates }}</div>
+      <div class="lbl">Templates in use</div>
+    </div>
+  </div>
+
+  <!-- No sites yet -->
+  {% if not grouped_sites %}
+  <div class="empty">
+    <h2>No websites created yet</h2>
+    <p>Click "Create New Website" to add your first site.</p>
+    <a href="/admin/sites/site/add/" class="btn-create">＋ Create New Website</a>
+  </div>
+
+  {% else %}
+  <!-- Sites grouped by template -->
+  {% for group in grouped_sites %}
+  <div class="tpl-group">
+    <div class="tpl-heading">
+      <span class="tpl-badge" style="background:{{ group.colour }}">{{ group.label }}</span>
+      <span class="tpl-count">{{ group.sites|length }} site{{ group.sites|length|pluralize }}</span>
+    </div>
+
+    <div class="sites-grid">
+      {% for site in group.sites %}
+      <div class="site-card" style="--c:{{ group.colour }}">
+        <div class="site-card-body">
+          <div class="site-name">{{ site.name }}</div>
+          <span class="site-key">{{ site.key }}</span>
+          {% if site.domain %}
+          <div class="site-domain">🌐 {{ site.domain }}</div>
+          {% endif %}
+          <div class="site-meta">
+            {% if site.is_active %}
+              <span class="badge-active">● Active</span>
+            {% else %}
+              <span class="badge-inactive">○ Inactive</span>
+            {% endif %}
+            {% if site.nadmins %}
+              <span style="color:#10B981;font-weight:600">👤 Owner assigned</span>
+            {% else %}
+              <span style="color:#EF4444;font-weight:600">⚠️ No owner yet</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="site-card-actions">
+          <!-- Edit site settings -->
+          <a href="/admin/sites/site/{{ site.pk }}/change/" class="action-btn">
+            ✏️ Edit Settings
+          </a>
+
+          <!-- Manage content for this site -->
+          <form method="post" action="/admin/manage-content/" style="display:contents">
+            {% csrf_token %}
+            <input type="hidden" name="site_key" value="{{ site.key }}">
+            <button type="submit" class="action-btn primary">
+              📝 Manage Content
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -5,6 +5,8 @@ import {
   FaProjectDiagram,
   FaFileSignature,
   FaFileContract,
+  FaServer,
+  FaHeadset,
   FaArrowRight,
 } from 'react-icons/fa';
 import { useSiteContent } from '../content/useSiteContent';
@@ -15,6 +17,8 @@ const overviewIcons = {
   schemes: <FaProjectDiagram size={22} />,
   circulars: <FaFileSignature size={22} />,
   tenders: <FaFileContract size={22} />,
+  infrastructure: <FaServer size={22} />,
+  helpdesk: <FaHeadset size={22} />,
 };
 
 const DepartmentOverview = () => {
