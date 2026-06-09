@@ -44,9 +44,6 @@ urlpatterns = [
     path('api/portal/',        include('portal_settings.urls')),
     path('api/',               include('sites.urls')),
 
-    # Template-specific API routes
-    path('api/edu/',     include('edu_content.urls')),
-    path('api/finance/', include('finance_content.urls')),
 ]
 
 # In development, serve media files (uploaded images/PDFs) directly

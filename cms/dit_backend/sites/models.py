@@ -22,17 +22,12 @@ class Site(models.Model):
     # That's it — build-all.ps1 will pick it up automatically.
     # ────────────────────────────────────────────────────────────────────────
     TEMPLATE_CHOICES = [
-        ('template-one',   'Template One — DIT Portal (Blue)'),
-        ('template-two',   'Template Two — EDU Portal (Green)'),
-        ('template-three', 'Template Three — Finance Portal (Red)'),
+        ('template-one', 'Template One — DIT Portal (Blue)'),
     ]
 
     # Maps template key → React folder name at the project root.
-    # Keep this in sync with TEMPLATE_CHOICES.
     TEMPLATE_FOLDER = {
-        'template-one':   'template-one',
-        'template-two':   'EDU',
-        'template-three': 'finance',
+        'template-one': 'template-one',
     }
 
     key = models.SlugField(

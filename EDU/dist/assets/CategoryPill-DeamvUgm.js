@@ -1,1 +1,0 @@
-import{j as a}from"./state-DRKyZqLU.js";const c={A:"bg-cat-a",B:"bg-cat-b",C:"bg-cat-c",D:"bg-cat-d",E:"bg-cat-e",F:"bg-cat-f",G:"bg-cat-g",H:"bg-cat-h",I:"bg-cat-i",J:"bg-cat-j",K:"bg-cat-k"};function g({category:t}){return a.jsxs("span",{className:`inline-flex rounded-badge px-2.5 py-1 text-xs font-black text-white ${c[t]}`,children:["Category ",t]})}export{g as C};

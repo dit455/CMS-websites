@@ -1,1 +1,0 @@
-import{j as e,Q as t,a as i}from"./state-DRKyZqLU.js";import{$ as o}from"./feedback-6qAIqpvg.js";import"./router-C-BCR9va.js";const s=new i({defaultOptions:{queries:{staleTime:1e3*30,refetchOnWindowFocus:!1}}});function l({children:r}){return e.jsxs(t,{client:s,children:[r,e.jsx(o,{richColors:!0,position:"top-right"})]})}export{l as AppProviders};
