@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'menu_manager',
     'about_page',
     'portal_settings',
+
+    # Template-specific content apps
+    'edu_content',      # Only shown in admin for template-two (EDU) sites
+    'finance_content',  # Only shown in admin for template-three (Finance) sites
 ]
 
 MIDDLEWARE = [

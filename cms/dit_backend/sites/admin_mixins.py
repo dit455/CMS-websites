@@ -117,6 +117,44 @@ class SiteScopedAdminMixin:
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class TemplateScopedAdminMixin(SiteScopedAdminMixin):
+    """
+    Extends SiteScopedAdminMixin so an admin section only appears when the
+    active site uses a specific template.
+
+    Usage:
+        class MyEduAdmin(TemplateScopedAdminMixin, admin.ModelAdmin):
+            required_template = 'template-two'   # EDU
+    """
+    required_template: str | None = None  # override in subclass
+
+    def _active_site_matches(self, request) -> bool:
+        if not self.required_template:
+            return True
+        if request.user.is_superuser:
+            return True
+        key = request.session.get('cms_active_site')
+        if not key:
+            return False
+        site = Site.objects.filter(key=key).first()
+        return bool(site and site.template == self.required_template)
+
+    def has_module_perms(self, request):
+        return self._active_site_matches(request) and super().has_module_perms(request)
+
+    def has_view_permission(self, request, obj=None):
+        return self._active_site_matches(request) and super().has_view_permission(request, obj)
+
+    def has_add_permission(self, request):
+        return self._active_site_matches(request) and super().has_add_permission(request)
+
+    def has_change_permission(self, request, obj=None):
+        return self._active_site_matches(request) and super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        return self._active_site_matches(request) and super().has_delete_permission(request, obj)
+
+
 class SiteScopedInlineMixin:
     """Add to any TabularInline/StackedInline whose model has a `site` ForeignKey."""
 
