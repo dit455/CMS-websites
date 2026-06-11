@@ -4,6 +4,7 @@ import itMinister from '../assets/img/itminister.png';
 import secIT from '../assets/img/secit25b.jpg';
 import director from '../assets/img/director.jpeg';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const officialImages = {
   minister: itMinister,
@@ -14,6 +15,8 @@ const officialImages = {
 const Officials = () => {
   const { content } = useSiteContent();
   const { site } = content;
+
+  if (!content.officials.length) return <CmsPlaceholder section="Officials" />;
 
   return (
     <Container id="about" className="py-5 my-3">

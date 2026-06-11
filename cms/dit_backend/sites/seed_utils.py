@@ -92,7 +92,11 @@ def seed_menu_for_site(site, clear=False):
 
 def seed_portal_for_site(site):
     """Seed officials, partners, settings, stats and quick links for `site`."""
-    SiteSetting.objects.get_or_create(site=site)
+    setting, _ = SiteSetting.objects.get_or_create(site=site)
+    # Pre-fill department name from the site name entered in the Add Website form
+    if not setting.department_name:
+        setting.department_name = site.name
+        setting.save(update_fields=['department_name'])
 
     for name, role, initials, order in _DEFAULT_OFFICIALS:
         Official.objects.get_or_create(

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FaBell, FaDownload, FaBriefcase, FaGavel, FaArrowRight, FaFileContract } from 'react-icons/fa';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const resourceIcons = {
   bell: <FaBell size={22} />,
@@ -15,6 +16,9 @@ const CitizenResources = () => {
   const { content } = useSiteContent();
   const [showAllResources, setShowAllResources] = useState(false);
   const visibleResourceCount = 3;
+
+  if (!content.resourceGroups.length) return <CmsPlaceholder section="Citizen Resources" />;
+
   const visibleResourceGroups = showAllResources
     ? content.resourceGroups
     : content.resourceGroups.slice(0, visibleResourceCount);

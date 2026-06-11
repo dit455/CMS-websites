@@ -2,10 +2,13 @@ import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FaArrowRight } from 'react-icons/fa';
 import serviceIconMap from './serviceIconMap';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const Services = () => {
   const { content } = useSiteContent();
   const services = content.services.slice(0, 6);
+
+  if (!services.length) return <CmsPlaceholder section="Services" />;
 
   return (
     <Container id="services" className="py-5 my-3">

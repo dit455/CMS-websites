@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import { DOCUMENT_CATEGORIES, DOCUMENT_UNAVAILABLE_MESSAGE } from '../config/portalConfig';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const MotionDiv = motion.div;
 
@@ -73,6 +74,8 @@ const Documents = () => {
   const [category, setCategory] = useState('');
   const [actionMessage, setActionMessage] = useState('');
   const [showAllDocuments, setShowAllDocuments] = useState(false);
+
+  if (!content.documents.length) return <CmsPlaceholder section="Documents" />;
 
   const filteredDocs = content.documents.filter((doc) => {
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase());

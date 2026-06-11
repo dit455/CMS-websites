@@ -368,13 +368,11 @@ const Header = () => {
             </div>
             <div className="brand-copy">
               <span className="portal-badge">Official Government Portal</span>
-              <h1 className="department-bilingual-title" aria-label="Directorate of Information Technology, Government of Puducherry">
-                <span className="department-title-en">Directorate of Information Technology</span>
-                <span className="department-title-ta" lang="ta">தகவல் தொழில்நுட்ப இயக்குநரகம்</span>
+              <h1 className="department-bilingual-title" aria-label={site.departmentName || 'Department'}>
+                <span className="department-title-en">{site.departmentName || 'Department Name'}</span>
               </h1>
               <p className="government-bilingual-title">
-                <span>Government of Puducherry</span>
-                <span lang="ta">புதுச்சேரி அரசு</span>
+                <span>{site.governmentName || 'Government'}</span>
               </p>
             </div>
             <div className="brand-logo-tile site-mark">

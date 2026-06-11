@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
-import { GOVERNMENT_PARTNER_PORTALS } from '../config/portalConfig';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const PartnerCard = ({ partner, duplicate = false }) => {
   const [imageFailed, setImageFailed] = useState(false);
@@ -43,8 +43,9 @@ const PartnerCard = ({ partner, duplicate = false }) => {
 
 const GovernmentPartners = () => {
   const { content } = useSiteContent();
-  // Always show hardcoded template partners PLUS any added via CMS admin
-  const partners = [...GOVERNMENT_PARTNER_PORTALS, ...(content.partners || [])];
+  const partners = content.partners || [];
+
+  if (!partners.length) return <CmsPlaceholder section="Government Partners" />;
 
   return (
   <section className="government-partners-section" aria-labelledby="government-partners-title">

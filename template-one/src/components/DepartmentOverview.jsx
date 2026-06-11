@@ -10,6 +10,7 @@ import {
   FaArrowRight,
 } from 'react-icons/fa';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const overviewIcons = {
   department: <FaBuilding size={22} />,
@@ -25,6 +26,8 @@ const DepartmentOverview = () => {
   const { content } = useSiteContent();
   const { site } = content;
   const emailDisplay = site.helpdeskEmailDisplay || site.helpdeskEmail;
+
+  if (!content.homeHighlights.length) return <CmsPlaceholder section="Department Overview" />;
 
   return (
     <section id="department-overview" className="department-overview-section py-4 my-2" aria-labelledby="department-overview-title">

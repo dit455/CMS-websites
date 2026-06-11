@@ -1,9 +1,12 @@
 import { FaBullhorn } from 'react-icons/fa';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const NewsTicker = () => {
   const { content } = useSiteContent();
   const news = content.newsItems;
+
+  if (!news.length) return <CmsPlaceholder section="News Ticker" />;
 
   return (
     <div className="news-ticker-container shadow-sm border-bottom">

@@ -1,6 +1,7 @@
 import { Container, Row, Col, ListGroup } from 'react-bootstrap';
 import { FaLightbulb, FaRunning, FaRegNewspaper, FaChevronRight } from 'react-icons/fa';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const activityIcons = {
   lightbulb: FaLightbulb,
@@ -10,6 +11,8 @@ const activityIcons = {
 
 const Activities = () => {
   const { content } = useSiteContent();
+
+  if (!content.activities.length) return <CmsPlaceholder section="Activities" />;
 
   return (
     <Container id="activities" className="py-5 my-3">

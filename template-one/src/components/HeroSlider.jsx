@@ -4,6 +4,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import hero1 from '../assets/img/It hero banner.png';
 import hero2 from '../assets/img/ditdi11022024r.png';
 import { useSiteContent } from '../content/useSiteContent';
+import CmsPlaceholder from './CmsPlaceholder';
 
 const MotionDiv = motion.div;
 
@@ -11,6 +12,8 @@ const heroImages = { hero1, hero2 };
 
 const HeroSlider = () => {
   const { content } = useSiteContent();
+
+  if (!content.heroSlides.length) return <CmsPlaceholder section="Hero Slider" />;
 
   return (
     <section className="hero-shell position-relative">
