@@ -14,8 +14,12 @@ for /f "usebackq tokens=1* delims=:" %%A in (`findstr /r /v "^#" "%~dp0sites.con
     )
 )
 
-rem ── Start Django backend ──────────────────────────────────────────────────
-start "DIT Backend" cmd /k "cd /d %~dp0cms\dit_backend && %~dp0.venv\Scripts\python.exe manage.py runserver 10.65.51.44:8000"
+rem ── Detect this machine's LAN IP dynamically (no hardcoded IP) ────────────
+for /f "delims=" %%I in ('%~dp0.venv\Scripts\python.exe "%~dp0scripts\get_local_ip.py" 2^>nul') do set LOCAL_IP=%%I
+if "%LOCAL_IP%"=="" set LOCAL_IP=127.0.0.1
+
+rem ── Start Django backend — binds to all interfaces (localhost + LAN IP) ──
+start "DIT Backend" cmd /k "cd /d %~dp0cms\dit_backend && %~dp0.venv\Scripts\python.exe manage.py runserver 0.0.0.0:8000"
 
 rem ── Start every frontend listed in sites.conf ─────────────────────────────
 for /f "usebackq tokens=1* delims=:" %%A in (`findstr /r /v "^#" "%~dp0sites.conf"`) do (
@@ -35,7 +39,7 @@ ping -n 6 127.0.0.1 >nul
 
 echo.
 echo   ============================================================
-echo   ADMIN PANEL  -^>  http://10.65.51.44:8000/admin
+echo   ADMIN PANEL  -^>  http://%LOCAL_IP%:8000/admin
 echo   ============================================================
 echo.
 echo   YOUR SITES:
@@ -46,7 +50,7 @@ rem Show site list from Django
 
 echo.
 echo   ============================================================
-echo   Add new sites at: http://10.65.51.44:8000/admin
+echo   Add new sites at: http://%LOCAL_IP%:8000/admin
 echo   Close this window to keep servers running in background.
 echo   ============================================================
 echo.

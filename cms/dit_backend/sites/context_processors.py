@@ -27,7 +27,8 @@ def _port_for_folder(folder: str, fallback_port: str) -> str:
 def active_site(request):
     """Inject cms_active_site and frontend_base_url into every admin template."""
     key = getattr(request, 'session', {}).get('cms_active_site')
-    frontend_base = getattr(settings, 'FRONTEND_BASE_URL', 'http://10.65.51.44:5173')
+    # FRONTEND_BASE_URL is always set in settings.py (auto-detected LAN IP or .env override)
+    frontend_base = settings.FRONTEND_BASE_URL
 
     if not key:
         return {'frontend_base_url': frontend_base}
