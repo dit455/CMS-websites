@@ -31,8 +31,8 @@ except FileNotFoundError:
 
 default_port = list(folder_port.values())[0] if folder_port else '5173'
 
-# Get public IP from FRONTEND_BASE_URL setting (auto-detected LAN IP, see settings.py)
-frontend_base = settings.FRONTEND_BASE_URL
+# Get public IP from FRONTEND_BASE_URL setting
+frontend_base = getattr(settings, 'FRONTEND_BASE_URL', 'http://10.65.51.44:5173')
 # Extract just the host:port part
 from urllib.parse import urlparse
 parsed = urlparse(frontend_base)
