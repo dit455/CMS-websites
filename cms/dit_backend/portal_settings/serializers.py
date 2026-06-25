@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (Official, Partner, SiteSetting, PortalStat, QuickLink,
-                     ResourceGroup, ResourcePoint)
+                     ResourceGroup, ResourcePoint, FooterLink)
 
 
 class OfficialSerializer(serializers.ModelSerializer):
@@ -50,6 +50,12 @@ class QuickLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuickLink
         fields = ['id', 'label', 'caption', 'icon', 'href', 'accent', 'surface', 'order']
+
+
+class FooterLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FooterLink
+        fields = ['id', 'label', 'href', 'icon', 'order']
 
 
 class ResourceGroupSerializer(serializers.ModelSerializer):

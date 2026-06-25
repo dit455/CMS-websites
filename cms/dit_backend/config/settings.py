@@ -4,11 +4,31 @@ Government of Puducherry
 """
 
 import os
+import socket
 from pathlib import Path
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _detect_local_ip():
+    """
+    Auto-detect this machine's LAN IP so the server works on whichever
+    machine/network it's run on, without hardcoding an IP in source code.
+    Falls back to 127.0.0.1 if detection fails (e.g. no network).
+    """
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except OSError:
+        return '127.0.0.1'
+
+
+LOCAL_IP = _detect_local_ip()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dit-puducherry-change-in-production-xyz123')
@@ -16,7 +36,9 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-dit-puducherry-change
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,10.65.51.44').split(',')
+# ALLOWED_HOSTS auto-includes this machine's detected LAN IP — set ALLOWED_HOSTS
+# in .env to override for production.
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=f'localhost,127.0.0.1,{LOCAL_IP}').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,6 +64,7 @@ INSTALLED_APPS = [
     'menu_manager',
     'about_page',
     'portal_settings',
+    'custom_pages',
 
 ]
 
@@ -143,5 +166,5 @@ else:
 CORS_ALLOW_CREDENTIALS = True
 
 # ─── Frontend public URL (used in admin navbar "View Website" link) ────────────
-# Change this if your machine IP or port changes.
-FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default='http://10.65.51.44:5173')
+# Auto-uses this machine's detected LAN IP — set FRONTEND_BASE_URL in .env to override.
+FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'http://{LOCAL_IP}:5173')

@@ -54,6 +54,16 @@ class MenuItemAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
 
     inlines = [MenuChildInline]
 
+    def save_formset(self, request, form, formset, change):
+        """Child items don't expose a 'site' field in the inline form —
+        auto-inherit it from the parent so they're never orphaned with site=None."""
+        instances = formset.save(commit=False)
+        for obj in instances:
+            if not obj.site_id and obj.parent_id:
+                obj.site_id = obj.parent.site_id
+            obj.save()
+        formset.save_m2m()
+
     def display_label(self, obj):
         if obj.parent:
             return format_html('&nbsp;&nbsp;&nbsp;└─ {}', obj.label)

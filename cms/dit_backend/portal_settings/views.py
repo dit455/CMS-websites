@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from sites.mixins import SiteScopedQuerySetMixin
 from sites.models import Site
-from .models import Official, Partner, SiteSetting, PortalStat, QuickLink, ResourceGroup
+from .models import Official, Partner, SiteSetting, PortalStat, QuickLink, ResourceGroup, FooterLink
 from .serializers import (OfficialSerializer, PartnerSerializer,
                           SiteSettingSerializer, PortalStatSerializer,
-                          QuickLinkSerializer, ResourceGroupSerializer)
+                          QuickLinkSerializer, ResourceGroupSerializer, FooterLinkSerializer)
 
 
 class _RequestContextMixin:
@@ -52,6 +52,13 @@ class ResourceGroupViewSet(SiteScopedQuerySetMixin, viewsets.ModelViewSet):
         return self.filter_by_site(
             ResourceGroup.objects.filter(is_active=True).prefetch_related('points')
         )
+
+
+class FooterLinkViewSet(SiteScopedQuerySetMixin, viewsets.ModelViewSet):
+    serializer_class = FooterLinkSerializer
+
+    def get_queryset(self):
+        return self.filter_by_site(FooterLink.objects.filter(is_active=True))
 
 
 def _resolve_site(request):

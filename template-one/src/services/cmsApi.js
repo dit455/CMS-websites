@@ -61,6 +61,7 @@ export const cmsApi = {
   stats:         () => get('/portal/stats/').then(unwrap),
   quickLinks:    () => get('/portal/quick-links/').then(unwrap),
   resourceGroups: () => get('/portal/resource-groups/').then(unwrap),
+  footerLinks:    () => get('/portal/footer-links/').then(unwrap),
   settings:      () => get('/portal/settings/').then(unwrap),
   siteConfig:    () => get('/site-config/').then(unwrap),
 };

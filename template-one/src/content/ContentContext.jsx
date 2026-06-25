@@ -14,6 +14,7 @@ import {
   mapStats,
   mapQuickLinks,
   mapResourceGroups,
+  mapFooterLinks,
   mapAbout,
   mapSiteSettings,
 } from '../services/cmsMapper';
@@ -39,6 +40,7 @@ const applyApiData = (base, api) => {
   apply(mapStats(api.stats),                   'portalStats');
   apply(mapQuickLinks(api.quickLinks),         'quickLinks');
   apply(mapResourceGroups(api.resourceGroups), 'resourceGroups');
+  apply(mapFooterLinks(api.footerLinks),       'footerLinks');
   apply(mapAbout(api.about),                   'about');
 
   const siteOverride = mapSiteSettings(api.settings);
@@ -57,7 +59,7 @@ export const ContentProvider = ({ children }) => {
     async function fetchAll() {
       const [
         heroSlides, services, documents, downloads, notifications, newsTicker,
-        officials, partners, stats, quickLinks, resourceGroups,
+        officials, partners, stats, quickLinks, resourceGroups, footerLinks,
         about, settings, menuData,
       ] = await Promise.all([
         cmsApi.heroBanners(),
@@ -71,6 +73,7 @@ export const ContentProvider = ({ children }) => {
         cmsApi.stats(),
         cmsApi.quickLinks(),
         cmsApi.resourceGroups(),
+        cmsApi.footerLinks(),
         cmsApi.about(),
         cmsApi.settings(),
         cmsApi.menu(),
@@ -81,7 +84,7 @@ export const ContentProvider = ({ children }) => {
       setContent((base) =>
         applyApiData(base, {
           heroSlides, services, documents, downloads, notifications, newsTicker,
-          officials, partners, stats, quickLinks, resourceGroups, about, settings,
+          officials, partners, stats, quickLinks, resourceGroups, footerLinks, about, settings,
         })
       );
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from sites.admin_mixins import SiteScopedAdminMixin
 from .models import (Official, Partner, SiteSetting, PortalStat, QuickLink,
-                     ResourceGroup, ResourcePoint)
+                     ResourceGroup, ResourcePoint, FooterLink)
 
 
 @admin.register(Official)
@@ -30,6 +30,8 @@ class SiteSettingAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
         ('Site', {'fields': ('site',)}),
         ('Department', {'fields': ('department_name', 'government_name')}),
         ('Contact', {'fields': ('helpdesk_email', 'phone', 'address')}),
+        ('Department Overview', {'fields': ('overview_description',),
+            'description': 'This paragraph appears in the Department Overview section on the homepage.'}),
         ('Footer', {'fields': ('footer_description',)}),
         ('Web Information Manager', {'fields': (
             'web_information_manager', 'web_information_manager_designation',
@@ -48,6 +50,14 @@ class PortalStatAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
 
 @admin.register(QuickLink)
 class QuickLinkAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
+    list_display       = ('site', 'order', 'label', 'href', 'is_active')
+    list_filter        = ('site',)
+    list_editable      = ('is_active',)
+    list_display_links = ('label',)
+
+
+@admin.register(FooterLink)
+class FooterLinkAdmin(SiteScopedAdminMixin, admin.ModelAdmin):
     list_display       = ('site', 'order', 'label', 'href', 'is_active')
     list_filter        = ('site',)
     list_editable      = ('is_active',)

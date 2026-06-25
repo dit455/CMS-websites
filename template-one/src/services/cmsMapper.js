@@ -136,6 +136,14 @@ export const mapResourceGroups = (apiGroups) =>
     points: Array.isArray(g.points) ? g.points : [],
   }));
 
+/** Footer citizen service links → content.footerLinks */
+export const mapFooterLinks = (apiLinks) =>
+  nonEmpty(apiLinks)?.map((l) => ({
+    label: l.label,
+    href: l.href,
+    icon: l.icon,
+  }));
+
 /** About page → content.about (full object) */
 export const mapAbout = (a) => {
   if (!a || typeof a !== 'object') return undefined;
@@ -171,6 +179,7 @@ export const mapSiteSettings = (s) => {
   if (s.helpdesk_email) out.helpdeskEmail = s.helpdesk_email;
   if (s.phone) out.phone = s.phone;
   if (s.address) out.address = s.address;
+  if (s.overview_description) out.overviewDescription = s.overview_description;
   if (s.footer_description) out.footerDescription = s.footer_description;
   if (s.web_information_manager) out.webInformationManager = s.web_information_manager;
   if (s.web_information_manager_designation)

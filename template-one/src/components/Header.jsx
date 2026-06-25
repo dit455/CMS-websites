@@ -493,6 +493,19 @@ const Header = () => {
                           </span>
                         </NavDropdown.Item>
                       ))}
+                      {/* CMS submenu items added under Services (Menu Manager → parent = Services) */}
+                      {link.children?.map((child) => (
+                        <NavDropdown.Item
+                          key={child.label}
+                          href={child.href}
+                          onClick={(event) => handleNavClick(event, child.href)}
+                        >
+                          <span className="mega-menu-icon">{child.icon || <FaChevronRight size={12} />}</span>
+                          <span>
+                            <strong>{child.label}</strong>
+                          </span>
+                        </NavDropdown.Item>
+                      ))}
                     </div>
                   </NavDropdown>
                 ) : link.children ? (

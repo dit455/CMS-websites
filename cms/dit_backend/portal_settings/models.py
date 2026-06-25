@@ -90,6 +90,10 @@ class SiteSetting(models.Model):
     helpdesk_email    = models.EmailField(default='directorit@py.gov.in')
     phone             = models.CharField(max_length=50, default='+91-413-2246090')
     address           = models.TextField(default='II Floor, Planning & Research Department Complex, 505, Kamaraj Salai, Sakthi Nagar, Saram, Puducherry, 605013')
+    overview_description = models.TextField(
+        blank=True, default='',
+        help_text='Paragraph shown in the Department Overview section on the homepage.',
+    )
     footer_description = models.TextField(default='Leading the digital transformation journey of the Union Territory of Puducherry.')
 
     web_information_manager             = models.CharField(max_length=200, default='Shri. Aman Sharma')
@@ -195,6 +199,35 @@ class ResourceGroup(models.Model):
 
     def __str__(self):
         return f'[{self.order}] {self.title}'
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 7. Footer "Citizen Services" links (Footer.jsx citizen services column)
+# ─────────────────────────────────────────────────────────────────────────────
+class FooterLink(models.Model):
+    site = site_field()
+    ICON_CHOICES = [
+        ('gavel',      'Gavel / Grievance'),
+        ('clipboard',  'Clipboard / Track'),
+        ('bell',       'Bell / Notifications'),
+        ('download',   'Download / Circulars'),
+        ('briefcase',  'Briefcase / Tenders'),
+        ('users',      'Users / Helpdesk'),
+        ('link',       'Generic Link'),
+    ]
+    label   = models.CharField(max_length=100, help_text="e.g. 'Public Grievance Redressal'")
+    href    = models.CharField(max_length=300, default='#')
+    icon    = models.CharField(max_length=30, choices=ICON_CHOICES, default='link')
+    order   = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = 'Footer Citizen Service Link'
+        verbose_name_plural = 'Footer — Citizen Service Links'
+
+    def __str__(self):
+        return self.label
 
 
 class ResourcePoint(models.Model):

@@ -1,23 +1,19 @@
 import { Container } from 'react-bootstrap';
 import {
-  FaAddressBook,
   FaArrowUp,
   FaBell,
   FaBuilding,
   FaCheckCircle,
-  FaClock,
   FaClipboardList,
   FaDownload,
   FaEnvelope,
   FaFacebook,
   FaGavel,
-  FaInfoCircle,
   FaLinkedin,
   FaLink,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaProjectDiagram,
-  FaServer,
   FaTwitter,
   FaUsers,
   FaYoutube,
@@ -26,23 +22,10 @@ import { MANDATORY_FOOTER_LINKS } from '../config/portalConfig';
 import { useSiteContent } from '../content/useSiteContent';
 import siteLogo from '../assets/img/Site_logo.png';
 
-const defaultQuickLinks = [
-  { label: 'About Us', href: '#about-detail', icon: FaInfoCircle },
-  { label: 'Services', href: '#services', icon: FaLink },
-  { label: 'Infrastructure', href: '#services', icon: FaServer },
-  { label: 'Projects', href: '#activities', icon: FaProjectDiagram },
-  { label: 'Downloads', href: '#downloads', icon: FaDownload },
-  { label: 'Contact Us', href: '#contact', icon: FaAddressBook },
-];
-
-const citizenLinks = [
-  { label: 'Public Grievance Redressal', href: '#grievance-portal', icon: FaGavel },
-  { label: 'Track Complaint', href: '#grievances', icon: FaClipboardList },
-  { label: 'Notifications & Alerts', href: '#notifications', icon: FaBell },
-  { label: 'Circulars & Orders', href: '#documents', icon: FaDownload },
-  { label: 'Tenders', href: '#tenders', icon: FaProjectDiagram },
-  { label: 'Helpdesk Support', href: '#contact', icon: FaUsers },
-];
+const footerLinkIcons = {
+  gavel: FaGavel, clipboard: FaClipboardList, bell: FaBell,
+  download: FaDownload, briefcase: FaProjectDiagram, users: FaUsers, link: FaLink,
+};
 
 const utilityLabels = [
   'Privacy Policy',
@@ -79,11 +62,11 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { content } = useSiteContent();
   const { site } = content;
-  // Always show template quick links PLUS any added via CMS admin
-  const quickLinks = [
-    ...defaultQuickLinks,
-    ...(content.quickLinks || []).map((l) => ({ label: l.label, href: l.href || '#', icon: FaLink })),
-  ];
+  // CMS-only — no hardcoded fallback links
+  const quickLinks = (content.quickLinks || []).map((l) => ({ label: l.label, href: l.href || '#', icon: FaLink }));
+  const citizenLinks = (content.footerLinks || []).map((l) => ({
+    label: l.label, href: l.href || '#', icon: footerLinkIcons[l.icon] || FaLink,
+  }));
 
   const socialLinks = [
     site.facebookUrl && { href: site.facebookUrl, label: 'Facebook',  Icon: FaFacebook,  color: '#1877F2' },
@@ -103,7 +86,7 @@ const Footer = () => {
     <footer className="site-footer footer-modern text-white mt-4" aria-labelledby="footer-heading">
       <Container className="footer-shell">
         <h2 id="footer-heading" className="visually-hidden">
-          Directorate of Information Technology footer navigation
+          {site.departmentName} footer navigation
         </h2>
 
         <div className="footer-modern-grid">
@@ -117,31 +100,32 @@ const Footer = () => {
                 <h3 id="footer-about-title">{site.departmentName}</h3>
               </div>
             </div>
-            <p>
-              Driving digital transformation, e-Governance initiatives, and IT infrastructure
-              development across the Government of Puducherry.
-            </p>
+            {site.footerDescription && <p>{site.footerDescription}</p>}
             <span className="footer-trust-badge">
               <FaCheckCircle aria-hidden="true" />
               Official Government Website
             </span>
           </section>
 
-          <nav className="footer-modern-column" aria-labelledby="footer-quick-title">
-            <h3 id="footer-quick-title">
-              <FaLink aria-hidden="true" />
-              Quick Links
-            </h3>
-            <FooterLinkList ariaLabel="Quick links" links={quickLinks} />
-          </nav>
+          {quickLinks.length > 0 && (
+            <nav className="footer-modern-column" aria-labelledby="footer-quick-title">
+              <h3 id="footer-quick-title">
+                <FaLink aria-hidden="true" />
+                Quick Links
+              </h3>
+              <FooterLinkList ariaLabel="Quick links" links={quickLinks} />
+            </nav>
+          )}
 
-          <nav className="footer-modern-column" aria-labelledby="footer-citizen-title">
-            <h3 id="footer-citizen-title">
-              <FaUsers aria-hidden="true" />
-              Citizen Services
-            </h3>
-            <FooterLinkList ariaLabel="Citizen service links" links={citizenLinks} />
-          </nav>
+          {citizenLinks.length > 0 && (
+            <nav className="footer-modern-column" aria-labelledby="footer-citizen-title">
+              <h3 id="footer-citizen-title">
+                <FaUsers aria-hidden="true" />
+                Citizen Services
+              </h3>
+              <FooterLinkList ariaLabel="Citizen service links" links={citizenLinks} />
+            </nav>
+          )}
 
           <section className="footer-modern-column" aria-labelledby="footer-contact-title">
             <h3 id="footer-contact-title">
@@ -168,11 +152,6 @@ const Footer = () => {
                 <FaMapMarkerAlt aria-hidden="true" />
                 <b>Office Address</b>
                 <small>{site.address}</small>
-              </span>
-              <span>
-                <FaClock aria-hidden="true" />
-                <b>Working Hours</b>
-                <small>Monday - Friday, 09:00 AM - 05:45 PM</small>
               </span>
             </address>
           </section>
@@ -234,7 +213,6 @@ const Footer = () => {
               <div className="footer-meta-row">
                 <span>All Rights Reserved</span>
                 <span>Last Updated: {site.lastUpdated}</span>
-                <span>Visitor Counter: 1,27,840</span>
               </div>
               <small>
                 Content Owner: {site.contentOwner} | Web Information Manager: {site.webInformationManager} | Designation: {site.webInformationManagerDesignation}

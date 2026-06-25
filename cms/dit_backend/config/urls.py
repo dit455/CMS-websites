@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/documents/',     include('documents.urls')),
     path('api/news/',          include('news.urls')),
     path('api/portal/',        include('portal_settings.urls')),
+    path('api/pages/',         include('custom_pages.urls')),
     path('api/',               include('sites.urls')),
 
 ]

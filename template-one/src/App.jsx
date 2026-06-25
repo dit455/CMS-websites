@@ -17,6 +17,8 @@ import Footer from './components/Footer';
 import PageMetadata from './components/PageMetadata';
 import AboutDetailPage from './components/AboutDetailPage';
 import ServicesDetailPage from './components/ServicesDetailPage';
+import OverviewDetailPage from './components/OverviewDetailPage';
+import CmsPage from './components/CmsPage';
 import SectionWrapper from './components/SectionWrapper';
 import { ContentProvider } from './content/ContentContext';
 import { CMS_ENABLED } from './config/portalConfig';
@@ -57,8 +59,9 @@ const useHashView = () => {
 // ext.Component  — the default export (React component)
 // ext.fullPage   — if true, Component replaces the entire DefaultSections layout
 //                  if false/absent, Component is appended after DefaultSections
+// ext.routes     — optional { '#hash': Component } map for extra pages unique to this site
 const useExtension = () => {
-  const [ext, setExt] = useState({ Component: null, fullPage: false });
+  const [ext, setExt] = useState({ Component: null, fullPage: false, routes: {} });
 
   useEffect(() => {
     if (!SITE_KEY) return;
@@ -66,6 +69,7 @@ const useExtension = () => {
       .then(mod => setExt({
         Component: mod.default  || null,
         fullPage:  mod.fullPage === true,
+        routes:    mod.routes   || {},
       }))
       .catch(() => {});
   }, []);
@@ -77,22 +81,32 @@ const PortalApp = () => {
   const hash = useHashView();
   const ext  = useExtension();
 
-  const isCms            = CMS_ENABLED && hash === '#cms';
-  const isAboutDetail    = hash === '#about-detail';
-  const isServicesDetail = hash === '#services-detail';
+  const isCms             = CMS_ENABLED && hash === '#cms';
+  const isAboutDetail     = hash === '#about-detail';
+  const isServicesDetail  = hash === '#services-detail';
   const isGrievancePortal = hash === '#grievance-portal';
+  const isOverviewDetail  = hash === '#overview-detail';
+  const cmsPageSlug       = hash.startsWith('#page-') ? hash.slice('#page-'.length) : null;
+
+  const isExtRoute = Boolean(ext.routes[hash]);
 
   useEffect(() => {
-    if (isAboutDetail || isServicesDetail || isGrievancePortal) {
+    if (isAboutDetail || isServicesDetail || isGrievancePortal || isOverviewDetail || isExtRoute || cmsPageSlug) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [isAboutDetail, isGrievancePortal, isServicesDetail]);
+  }, [isAboutDetail, isGrievancePortal, isServicesDetail, isExtRoute, cmsPageSlug]);
 
   const renderMain = () => {
     if (isCms)             return <Suspense fallback={<div className="page-loader">Loading CMS...</div>}><CMSDashboard /></Suspense>;
     if (isAboutDetail)     return <AboutDetailPage />;
     if (isServicesDetail)  return <ServicesDetailPage />;
     if (isGrievancePortal) return <GrievancePortalPage />;
+    if (isOverviewDetail)  return <OverviewDetailPage />;
+    if (cmsPageSlug)       return <CmsPage slug={cmsPageSlug} />;
+
+    // Extension-specific route (unique page for this site only)
+    const ExtRoute = ext.routes[hash];
+    if (ExtRoute) return <ExtRoute />;
 
     // fullPage extension: extension controls the entire layout
     if (ext.fullPage && ext.Component) return <ext.Component />;
