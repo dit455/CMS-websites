@@ -36,12 +36,17 @@ def active_site(request):
     try:
         site = Site.objects.get(key=key)
 
-        # Use the port that matches this site's template folder in sites.conf,
-        # so "View Website" opens the correct template dev server.
-        parsed       = urlparse(frontend_base)
-        default_port = str(parsed.port or 5173)
-        port         = _port_for_folder(site.folder, default_port)
-        site_url     = f'{parsed.scheme}://{parsed.hostname}:{port}/?site={site.key}'
+        parsed = urlparse(frontend_base)
+        if parsed.path and parsed.path != '/':
+            # FRONTEND_BASE_URL already points at a deployed path (e.g. nginx
+            # serving the built site at /cms) — just append the site selector.
+            site_url = f'{frontend_base.rstrip("/")}/?site={site.key}'
+        else:
+            # Dev mode: use the port that matches this site's template folder
+            # in sites.conf, so "View Website" opens the correct Vite dev server.
+            default_port = str(parsed.port or 5173)
+            port         = _port_for_folder(site.folder, default_port)
+            site_url     = f'{parsed.scheme}://{parsed.hostname}:{port}/?site={site.key}'
 
         return {
             'cms_active_site':   site,

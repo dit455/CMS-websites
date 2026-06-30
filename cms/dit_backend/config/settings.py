@@ -34,11 +34,17 @@ LOCAL_IP = _detect_local_ip()
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dit-puducherry-change-in-production-xyz123')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # ALLOWED_HOSTS auto-includes this machine's detected LAN IP — set ALLOWED_HOSTS
 # in .env to override for production.
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=f'localhost,127.0.0.1,{LOCAL_IP}').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=f'0.0.0.0,61.2.143.168,localhost,127.0.0.1,{LOCAL_IP}').split(',')
+
+# Required for admin login (CSRF) to work behind nginx on this domain/IP.
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default=f'https://61.2.143.168,http://61.2.143.168,https://{LOCAL_IP},http://{LOCAL_IP},http://localhost,http://127.0.0.1',
+).split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -168,3 +174,5 @@ CORS_ALLOW_CREDENTIALS = True
 # ─── Frontend public URL (used in admin navbar "View Website" link) ────────────
 # Auto-uses this machine's detected LAN IP — set FRONTEND_BASE_URL in .env to override.
 FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'http://{LOCAL_IP}:5173')
+
+FORCE_SCRIPT_NAME = '/cms'

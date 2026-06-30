@@ -73,7 +73,7 @@
   <!-- Header -->
   <div class="dash-header">
     <h1>🌐 Website Management Dashboard</h1>
-    <a href="/admin/sites/site/add/" class="btn-create">＋ Create New Website</a>
+    <a href="{% url 'admin:sites_site_add' %}" class="btn-create">＋ Create New Website</a>
   </div>
 
   <!-- Stats -->
@@ -97,7 +97,7 @@
   <div class="empty">
     <h2>No websites created yet</h2>
     <p>Click "Create New Website" to add your first site.</p>
-    <a href="/admin/sites/site/add/" class="btn-create">＋ Create New Website</a>
+    <a href="{% url 'admin:sites_site_add' %}" class="btn-create">＋ Create New Website</a>
   </div>
 
   {% else %}
@@ -134,12 +134,12 @@
 
         <div class="site-card-actions">
           <!-- Edit site settings -->
-          <a href="/admin/sites/site/{{ site.pk }}/change/" class="action-btn">
+          <a href="{% url 'admin:sites_site_change' site.pk %}" class="action-btn">
             ✏️ Edit Settings
           </a>
 
           <!-- Manage content for this site -->
-          <form method="post" action="/admin/manage-content/" style="display:contents">
+          <form method="post" action="{% url 'admin_manage_content' %}" style="display:contents">
             {% csrf_token %}
             <input type="hidden" name="site_key" value="{{ site.key }}">
             <button type="submit" class="action-btn primary">

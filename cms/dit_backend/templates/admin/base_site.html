@@ -6,7 +6,7 @@
 {% block branding %}
 <div id="site-name">
   {% if request.user.is_superuser %}
-    <a href="/admin/dashboard/">DIT Puducherry CMS</a>
+    <a href="{% url 'admin_dashboard' %}">DIT Puducherry CMS</a>
   {% else %}
     <a href="{% url 'admin:index' %}">DIT Puducherry CMS</a>
   {% endif %}
@@ -15,7 +15,7 @@
 {% if request.user.is_superuser %}
   <div style="display:flex;align-items:center;gap:8px;margin-left:14px;flex-wrap:wrap;">
 
-    <a href="/admin/dashboard/"
+    <a href="{% url 'admin_dashboard' %}"
        style="background:rgba(255,255,255,.15);color:#fff;padding:4px 12px;
               border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">
       🌐 All Websites
@@ -25,7 +25,7 @@
       <span style="color:rgba(255,255,255,.5)">▸</span>
       <span style="color:#fff;font-size:13px;font-weight:700">{{ cms_active_site.name }}</span>
 
-      <a href="/admin/switch-site/"
+      <a href="{% url 'admin_site_switch' %}"
          style="background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;
                 border-radius:8px;text-decoration:none;font-size:11px;font-weight:600">
         ⇄ Switch
@@ -52,7 +52,7 @@
       <strong style="margin-left:4px">{{ cms_active_site.name }}</strong>
     </span>
 
-    <a href="/admin/switch-site/"
+    <a href="{% url 'admin_site_switch' %}"
        style="background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;
               border-radius:8px;text-decoration:none;font-size:11px;font-weight:600">
       ⇄ Switch Site

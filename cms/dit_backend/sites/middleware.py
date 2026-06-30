@@ -19,7 +19,9 @@ class SitePickerMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        path = request.path
+        # Use path_info (script-name-stripped) so this still matches correctly
+        # when FORCE_SCRIPT_NAME mounts the app under a subpath like /cms.
+        path = request.path_info
 
         if path.startswith('/admin/') and not self._skip(path):
             if request.user.is_authenticated:
@@ -29,7 +31,7 @@ class SitePickerMiddleware:
                     # Allow free navigation ONLY if they came from the dashboard
                     # (i.e. they clicked "Manage Content" and have an active site)
                     if path == '/admin/' and not request.session.get('cms_active_site'):
-                        return redirect('/admin/dashboard/')
+                        return redirect('admin_dashboard')
 
                 else:
                     # Dept admin: must have an active site selected
@@ -38,7 +40,7 @@ class SitePickerMiddleware:
                         if auto:
                             request.session['cms_active_site'] = auto
                         else:
-                            return redirect('/admin/select-site/')
+                            return redirect('admin_site_select')
 
         return self.get_response(request)
 

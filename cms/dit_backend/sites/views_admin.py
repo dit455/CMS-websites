@@ -31,7 +31,7 @@ def superadmin_dashboard(request):
     Shows all websites grouped by template with Create / Edit / Manage Content actions.
     """
     if not request.user.is_superuser:
-        return redirect('/admin/select-site/')
+        return redirect('admin_site_select')
 
     all_sites = Site.objects.order_by('template', 'name').prefetch_related('admins')
 
@@ -71,7 +71,7 @@ def manage_content(request):
     site_key = request.POST.get('site_key', '').strip()
     if site_key and Site.objects.filter(key=site_key).exists():
         request.session['cms_active_site'] = site_key
-    return redirect('/admin/')
+    return redirect('admin:index')
 
 
 # ── Dept-admin site picker ────────────────────────────────────────────────────
@@ -79,14 +79,14 @@ def manage_content(request):
 @require_http_methods(['GET', 'POST'])
 def site_select(request):
     if request.user.is_superuser:
-        return redirect('/admin/dashboard/')
+        return redirect('admin_dashboard')
 
     if request.method == 'POST':
         site_key = request.POST.get('site_key', '').strip()
         sites = _user_sites(request)
         if sites.filter(key=site_key).exists():
             request.session['cms_active_site'] = site_key
-            return redirect('/admin/')
+            return redirect('admin:index')
 
     sites = _user_sites(request)
     grouped = []
@@ -108,5 +108,5 @@ def site_select(request):
 def site_switch(request):
     request.session.pop('cms_active_site', None)
     if request.user.is_superuser:
-        return redirect('/admin/dashboard/')
-    return redirect('/admin/select-site/')
+        return redirect('admin_dashboard')
+    return redirect('admin_site_select')

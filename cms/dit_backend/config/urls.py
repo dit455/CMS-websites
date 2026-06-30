@@ -20,7 +20,7 @@ admin.site.index_title = "Content Management"
 
 urlpatterns = [
     # Root → redirect to admin
-    path('', RedirectView.as_view(url='/admin/', permanent=False)),
+    path('', RedirectView.as_view(url='admin/', permanent=False)),
 
     # Custom admin views — must be BEFORE admin.site.urls
     path('admin/dashboard/',      superadmin_dashboard, name='admin_dashboard'),
